@@ -120,7 +120,7 @@
     /* ----- шапка ----- */
     .header {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
 
     .header__icon {
@@ -156,6 +156,83 @@
       letter-spacing: 0.3px;
     }
 
+    /* ===== ПОИСК ===== */
+    .search-container {
+      max-width: 500px;
+      margin: 1.8rem auto 0.5rem;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1.2rem 0.8rem 3rem;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .search-input:focus {
+      border-color: rgba(255, 215, 0, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.25);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: none;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      padding: 0.2rem;
+    }
+
+    .search-clear:hover {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .search-clear.visible {
+      display: block;
+    }
+
+    .search-results-counter {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: 0.5rem;
+      min-height: 1.2rem;
+      letter-spacing: 0.3px;
+    }
+
+    .search-results-counter.highlight {
+      color: rgba(255, 215, 0, 0.5);
+    }
+
     /* ----- структура: категории ----- */
     .section-title {
       color: rgba(255, 255, 255, 0.3);
@@ -167,6 +244,7 @@
       display: flex;
       align-items: center;
       gap: 0.6rem;
+      transition: opacity 0.3s ease;
     }
 
     .section-title i {
@@ -181,16 +259,24 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
+    .section-title.hidden {
+      opacity: 0;
+      margin: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
     /* ----- сетка ссылок ----- */
     .links-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 1.2rem;
       margin-top: 0.3rem;
+      transition: all 0.3s ease;
     }
 
     .link-card {
-      /* индекс для расчёта задержки анимации, задаётся инлайново через style="--i:N" */
       --i: 0;
       background: rgba(255, 255, 255, 0.03);
       border-radius: 24px;
@@ -226,6 +312,10 @@
       opacity: 1;
     }
 
+    .link-card.hidden {
+      display: none;
+    }
+
     @keyframes linkPop {
       0% { opacity: 0; transform: scale(0.92) translateY(18px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -242,7 +332,6 @@
       transform: scale(0.97);
     }
 
-    /* видимый фокус для клавиатурной навигации */
     .link-card:focus-visible {
       outline: 2px solid #ffd966;
       outline-offset: 3px;
@@ -291,13 +380,45 @@
       margin-top: 0.1rem;
     }
 
-    /* цветовые метки категорий */
-    .category-tg { border-left: 3px solid #27a0e6; }
-    .category-vk { border-left: 3px solid #4c7bb7; }
-    .category-other { border-left: 3px solid #ffb347; }
-    .category-social { border-left: 3px solid #ff6b6b; }
-    .category-max { border-left: 3px solid #a855f7; }
-    .category-nav { border-left: 3px solid #22d3ee; }
+    /* цветовые метки категорий — делаем более выразительными */
+    .category-tg { 
+      border-left: 4px solid #27a0e6; 
+      border-left-color: #27a0e6;
+    }
+    .category-vk { 
+      border-left: 4px solid #4c7bb7; 
+    }
+    .category-other { 
+      border-left: 4px solid #ffb347; 
+    }
+    .category-social { 
+      border-left: 4px solid #ff6b6b; 
+    }
+    .category-max { 
+      border-left: 4px solid #a855f7; 
+    }
+    .category-nav { 
+      border-left: 4px solid #22d3ee; 
+    }
+
+    /* ===== ВИЗУАЛЬНАЯ ИЕРАРХИЯ: выделение главной секции ===== */
+    .section-primary .section-title {
+      color: rgba(255, 215, 0, 0.5);
+    }
+
+    .section-primary .section-title i {
+      color: rgba(255, 215, 0, 0.5);
+    }
+
+    .section-primary .link-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 215, 0, 0.06);
+    }
+
+    .section-primary .link-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 215, 0, 0.2);
+    }
 
     /* ----- футер ----- */
     .footer {
@@ -334,7 +455,6 @@
 
     /* ===== АДАПТИВ ===== */
 
-    /* Планшеты и маленькие ноутбуки */
     @media (max-width: 992px) {
       .card {
         padding: 2.2rem 2rem 2.6rem;
@@ -349,7 +469,6 @@
       }
     }
 
-    /* Телефоны (широкие) */
     @media (max-width: 768px) {
       .card {
         padding: 1.8rem 1.2rem 2.2rem;
@@ -389,9 +508,12 @@
         font-size: 0.65rem;
         margin: 1.4rem 0 0.7rem 0.2rem;
       }
+      .search-input {
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem 0.7rem 2.8rem;
+      }
     }
 
-    /* Маленькие телефоны */
     @media (max-width: 480px) {
       body {
         padding: 0.8rem;
@@ -416,7 +538,7 @@
       .link-card {
         padding: 1rem 0.2rem 0.8rem;
         border-radius: 16px;
-        border-left-width: 2px;
+        border-left-width: 3px;
       }
       .link-card i {
         font-size: 1.5rem;
@@ -444,9 +566,12 @@
       .footer span {
         font-size: 0.65rem;
       }
+      .search-input {
+        font-size: 0.8rem;
+        padding: 0.6rem 0.8rem 0.6rem 2.5rem;
+      }
     }
 
-    /* Очень маленькие (<= 360px) */
     @media (max-width: 380px) {
       .links-grid {
         grid-template-columns: 1fr;
@@ -539,6 +664,13 @@
       <symbol id="icon-arrow-right" viewBox="0 0 24 24">
         <path d="M4 12h16M14 6l6 6-6 6"/>
       </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7.2"/>
+        <path d="M16.5 16.5 21 21"/>
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -557,14 +689,33 @@
       <p>официальные и студенческие каналы</p>
     </div>
 
-    <!-- ===== СЕКЦИЯ: Telegram & MAX ===== -->
-    <section aria-labelledby="sec-tg">
+    <!-- ===== ПОИСК ===== -->
+    <div class="search-container" role="search">
+      <span class="search-icon" aria-hidden="true">
+        <svg class="icon" style="width:1.2rem;height:1.2rem;"><use href="#icon-search"></use></svg>
+      </span>
+      <input 
+        type="text" 
+        class="search-input" 
+        id="searchInput" 
+        placeholder="Поиск каналов по названию..." 
+        aria-label="Поиск каналов"
+        autocomplete="off"
+      />
+      <button class="search-clear" id="searchClear" aria-label="Очистить поиск">
+        <svg class="icon" style="width:1.2rem;height:1.2rem;"><use href="#icon-close"></use></svg>
+      </button>
+    </div>
+    <div class="search-results-counter" id="resultsCounter"></div>
+
+    <!-- ===== СЕКЦИЯ: Telegram & MAX (главная, с визуальным выделением) ===== -->
+    <section class="section-primary" aria-labelledby="sec-tg">
       <h2 class="section-title" id="sec-tg">
         <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
       </h2>
-      <div class="links-grid">
+      <div class="links-grid" data-section="primary">
         <!-- 1. Telegram ДГТУ -->
-        <a href="https://t.me/dstu_live" class="link-card category-tg" style="--i:1" target="_blank" rel="noopener" aria-label="ДГТУ в Telegram: новости и анонсы">
+        <a href="https://t.me/dstu_live" class="link-card category-tg" style="--i:1" target="_blank" rel="noopener" aria-label="ДГТУ в Telegram: новости и анонсы" data-search="ДГТУ в TG новости анонсы Telegram">
           <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg>
           <span class="link-card__title">ДГТУ в TG</span>
           <span class="link-card__sub">новости, анонсы</span>
@@ -572,7 +723,7 @@
         </a>
 
         <!-- 2. Ректор ДГТУ (MAX) -->
-        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" style="--i:2" target="_blank" rel="noopener" aria-label="Ректор ДГТУ Бесарион Месхи в MAX">
+        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" style="--i:2" target="_blank" rel="noopener" aria-label="Ректор ДГТУ Бесарион Месхи в MAX" data-search="Ректор ДГТУ Бесарион Месхи MAX ректорат">
           <svg class="icon" aria-hidden="true"><use href="#icon-user-tie"></use></svg>
           <span class="link-card__title">Ректор ДГТУ</span>
           <span class="link-card__sub">Бесарион Месхи</span>
@@ -580,7 +731,7 @@
         </a>
 
         <!-- 3. Профсоюз ДГТУ -->
-        <a href="https://vk.ru/profdstu" class="link-card category-other" style="--i:3" target="_blank" rel="noopener" aria-label="Профсоюз ДГТУ: студенческая защита">
+        <a href="https://vk.ru/profdstu" class="link-card category-other" style="--i:3" target="_blank" rel="noopener" aria-label="Профсоюз ДГТУ: студенческая защита" data-search="Профсоюз ДГТУ студенческая защита профком">
           <svg class="icon" aria-hidden="true"><use href="#icon-handshake"></use></svg>
           <span class="link-card__title">Профсоюз ДГТУ</span>
           <span class="link-card__sub">студенческая защита</span>
@@ -588,7 +739,7 @@
         </a>
 
         <!-- 4. MAX канал -->
-        <a href="https://max.ru/dstu_live" class="link-card category-max" style="--i:4" target="_blank" rel="noopener" aria-label="Официальный канал ДГТУ в MAX: актуальное">
+        <a href="https://max.ru/dstu_live" class="link-card category-max" style="--i:4" target="_blank" rel="noopener" aria-label="Официальный канал ДГТУ в MAX: актуальное" data-search="MAX канал актуальное топ">
           <svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg>
           <span class="link-card__title">MAX канал</span>
           <span class="link-card__sub">актуальное</span>
@@ -596,7 +747,7 @@
         </a>
 
         <!-- 5. Дни навигации (Telegram) -->
-        <a href="https://t.me/dni_navigacii" class="link-card category-nav" style="--i:5" target="_blank" rel="noopener" aria-label="Дни навигации в Telegram: ориентир в ДГТУ">
+        <a href="https://t.me/dni_navigacii" class="link-card category-nav" style="--i:5" target="_blank" rel="noopener" aria-label="Дни навигации в Telegram: ориентир в ДГТУ" data-search="Дни навигации ориентир ДГТУ навигатор">
           <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
           <span class="link-card__title">Дни навигации</span>
           <span class="link-card__sub">ориентир в ДГТУ</span>
@@ -610,9 +761,9 @@
       <h2 class="section-title" id="sec-vk">
         <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg> ВКонтакте
       </h2>
-      <div class="links-grid">
+      <div class="links-grid" data-section="vk">
         <!-- 6. ВК · ДГТУ -->
-        <a href="https://vk.com/donstu" class="link-card category-vk" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная страница ДГТУ ВКонтакте">
+        <a href="https://vk.com/donstu" class="link-card category-vk" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная страница ДГТУ ВКонтакте" data-search="ВК ДГТУ официальная страница ВКонтакте">
           <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg>
           <span class="link-card__title">ВК · ДГТУ</span>
           <span class="link-card__sub">официальная страница</span>
@@ -620,7 +771,7 @@
         </a>
 
         <!-- 7. Дни навигации ВК -->
-        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" style="--i:2" target="_blank" rel="noopener" aria-label="Дни навигации ВКонтакте">
+        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" style="--i:2" target="_blank" rel="noopener" aria-label="Дни навигации ВКонтакте" data-search="Дни навигации ВК ВКонтакте навигатор dn.donstu">
           <svg class="icon" aria-hidden="true"><use href="#icon-map-signs"></use></svg>
           <span class="link-card__title">Дни навигации ВК</span>
           <span class="link-card__sub">vk.ru/dn.donstu</span>
@@ -634,9 +785,9 @@
       <h2 class="section-title" id="sec-other">
         <svg class="icon" aria-hidden="true"><use href="#icon-share"></use></svg> Другие платформы
       </h2>
-      <div class="links-grid">
+      <div class="links-grid" data-section="other">
         <!-- 8. Одноклассники -->
-        <a href="https://ok.ru/donstu" class="link-card category-social" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная группа ДГТУ в Одноклассниках">
+        <a href="https://ok.ru/donstu" class="link-card category-social" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная группа ДГТУ в Одноклассниках" data-search="Одноклассники официальная группа ok.ru">
           <svg class="icon" aria-hidden="true"><use href="#icon-ok"></use></svg>
           <span class="link-card__title">Одноклассники</span>
           <span class="link-card__sub">официальная группа</span>
@@ -644,7 +795,7 @@
         </a>
 
         <!-- 9. Дзен -->
-        <a href="https://dzen.ru/donstu" class="link-card category-social" style="--i:2" target="_blank" rel="noopener" aria-label="Публикации ДГТУ на Дзене">
+        <a href="https://dzen.ru/donstu" class="link-card category-social" style="--i:2" target="_blank" rel="noopener" aria-label="Публикации ДГТУ на Дзене" data-search="Дзен публикации ДГТУ dzen.ru">
           <svg class="icon" aria-hidden="true"><use href="#icon-newspaper"></use></svg>
           <span class="link-card__title">Дзен</span>
           <span class="link-card__sub">публикации ДГТУ</span>
@@ -652,7 +803,7 @@
         </a>
 
         <!-- 10. Rutube -->
-        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" style="--i:3" target="_blank" rel="noopener" aria-label="Видеоканал ДГТУ на Rutube">
+        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" style="--i:3" target="_blank" rel="noopener" aria-label="Видеоканал ДГТУ на Rutube" data-search="Rutube видеоканал ДГТУ rutube">
           <svg class="icon" aria-hidden="true"><use href="#icon-video"></use></svg>
           <span class="link-card__title">Rutube</span>
           <span class="link-card__sub">видеоканал ДГТУ</span>
@@ -667,5 +818,91 @@
       <span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg> обновлено 2026</span>
     </div>
   </main>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const searchInput = document.getElementById('searchInput');
+      const searchClear = document.getElementById('searchClear');
+      const resultsCounter = document.getElementById('resultsCounter');
+      const allCards = document.querySelectorAll('.link-card');
+      const sections = document.querySelectorAll('section');
+
+      // Функция поиска
+      function performSearch(query) {
+        const trimmed = query.trim().toLowerCase();
+        let visibleCount = 0;
+
+        allCards.forEach(card => {
+          const searchData = (card.getAttribute('data-search') || '').toLowerCase();
+          const title = (card.querySelector('.link-card__title')?.textContent || '').toLowerCase();
+          const sub = (card.querySelector('.link-card__sub')?.textContent || '').toLowerCase();
+
+          const match = trimmed === '' || 
+                        searchData.includes(trimmed) || 
+                        title.includes(trimmed) || 
+                        sub.includes(trimmed);
+
+          if (match) {
+            card.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+
+        // Показываем/скрываем секции
+        sections.forEach(section => {
+          const grid = section.querySelector('.links-grid');
+          if (!grid) return;
+          const visibleCards = grid.querySelectorAll('.link-card:not(.hidden)');
+          const title = section.querySelector('.section-title');
+          
+          if (visibleCards.length === 0 && trimmed !== '') {
+            if (title) title.classList.add('hidden');
+          } else {
+            if (title) title.classList.remove('hidden');
+          }
+        });
+
+        // Обновляем счетчик
+        if (trimmed === '') {
+          resultsCounter.textContent = '';
+          resultsCounter.classList.remove('highlight');
+          searchClear.classList.remove('visible');
+        } else {
+          const total = allCards.length;
+          resultsCounter.textContent = `Найдено: ${visibleCount} из ${total}`;
+          resultsCounter.classList.add('highlight');
+          searchClear.classList.add('visible');
+        }
+      }
+
+      // Обработчик ввода
+      searchInput.addEventListener('input', function() {
+        performSearch(this.value);
+      });
+
+      // Очистка поиска
+      searchClear.addEventListener('click', function() {
+        searchInput.value = '';
+        performSearch('');
+        searchInput.focus();
+      });
+
+      // Обработка клавиши Escape для очистки
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          performSearch('');
+          searchInput.blur();
+        }
+      });
+
+      // Инициализация — все карточки видны
+      performSearch('');
+    })();
+  </script>
 </body>
 </html>
