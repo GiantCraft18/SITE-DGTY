@@ -7,13 +7,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
     /* ----- общие сбросы и фон ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    /* ----- встроенные SVG-иконки ----- */
+    .icon {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: -0.15em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .icon .dot {
+      fill: currentColor;
+      stroke: none;
     }
 
     body {
@@ -172,6 +190,8 @@
     }
 
     .link-card {
+      /* индекс для расчёта задержки анимации, задаётся инлайново через style="--i:N" */
+      --i: 0;
       background: rgba(255, 255, 255, 0.03);
       border-radius: 24px;
       padding: 1.4rem 0.6rem 1.2rem;
@@ -187,6 +207,7 @@
       align-items: center;
       gap: 0.4rem;
       animation: linkPop 0.5s ease backwards;
+      animation-delay: calc(var(--i) * 0.02s);
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -205,16 +226,6 @@
       opacity: 1;
     }
 
-    .link-card:nth-child(1) { animation-delay: 0.02s; }
-    .link-card:nth-child(2) { animation-delay: 0.04s; }
-    .link-card:nth-child(3) { animation-delay: 0.06s; }
-    .link-card:nth-child(4) { animation-delay: 0.08s; }
-    .link-card:nth-child(5) { animation-delay: 0.10s; }
-    .link-card:nth-child(6) { animation-delay: 0.12s; }
-    .link-card:nth-child(7) { animation-delay: 0.14s; }
-    .link-card:nth-child(8) { animation-delay: 0.16s; }
-    .link-card:nth-child(9) { animation-delay: 0.18s; }
-
     @keyframes linkPop {
       0% { opacity: 0; transform: scale(0.92) translateY(18px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -229,6 +240,14 @@
 
     .link-card:active {
       transform: scale(0.97);
+    }
+
+    /* видимый фокус для клавиатурной навигации */
+    .link-card:focus-visible {
+      outline: 2px solid #ffd966;
+      outline-offset: 3px;
+      transform: translateY(-4px) scale(1.01);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .link-card i {
@@ -302,6 +321,15 @@
     .footer i {
       font-size: 0.9rem;
       color: rgba(255, 215, 0, 0.15);
+    }
+
+    /* уважение к пользователям с reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
     /* ===== АДАПТИВ ===== */
@@ -447,8 +475,75 @@
   </style>
 </head>
 <body>
+  <!-- ===== встроенные SVG-иконки (без внешних CDN) ===== -->
+  <svg style="display:none" aria-hidden="true">
+    <defs>
+      <symbol id="icon-cap" viewBox="0 0 24 24">
+        <path d="M12 3 2 8l10 5 10-5-10-5Z"/>
+        <path d="M6 10.5v4c0 1.5 3 3 6 3s6-1.5 6-3v-4"/>
+        <path d="M2 8v5.5"/>
+      </symbol>
+      <symbol id="icon-paper-plane" viewBox="0 0 24 24">
+        <path d="M3 11 21 3l-8 18-2-8-8-2Z"/>
+      </symbol>
+      <symbol id="icon-share" viewBox="0 0 24 24">
+        <circle cx="6" cy="12" r="2.2"/>
+        <circle cx="18" cy="6" r="2.2"/>
+        <circle cx="18" cy="18" r="2.2"/>
+        <path d="M8 11l8-4M8 13l8 4"/>
+      </symbol>
+      <symbol id="icon-user-tie" viewBox="0 0 24 24">
+        <circle cx="12" cy="7" r="3.2"/>
+        <path d="M6 21v-1.5a6 6 0 0 1 12 0V21"/>
+        <path d="M10.3 12.2 12 15l1.7-2.8"/>
+      </symbol>
+      <symbol id="icon-handshake" viewBox="0 0 24 24">
+        <path d="M3 11.5 8 8l4 2.5 4-2.5 5 3.5"/>
+        <path d="M8.5 11.5 11 15l-2 2M15.5 11.5 13 15l2 2"/>
+      </symbol>
+      <symbol id="icon-bolt" viewBox="0 0 24 24">
+        <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-compass" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M15.5 8.5 13 13l-4.5 2.5L11 11l4.5-2.5Z"/>
+      </symbol>
+      <symbol id="icon-vk" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <circle class="dot" cx="8" cy="9" r="1.2"/>
+        <circle class="dot" cx="16" cy="9" r="1.2"/>
+        <circle class="dot" cx="12" cy="16" r="1.2"/>
+        <path d="M8 9l4 7 4-7"/>
+      </symbol>
+      <symbol id="icon-map-signs" viewBox="0 0 24 24">
+        <path d="M5 21V4"/>
+        <path d="M5 6.5h6l1.8 1.8H19l-2 3 2 3h-6.2L11 12.5H5"/>
+      </symbol>
+      <symbol id="icon-ok" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="9.5" r="2.6"/>
+        <path d="M8 17c0-2.3 1.8-4 4-4s4 1.7 4 4"/>
+      </symbol>
+      <symbol id="icon-newspaper" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="14" height="14" rx="1.2"/>
+        <path d="M17 8h4v9a2 2 0 0 1-2 2H7"/>
+        <path d="M6 9h8M6 12h8M6 15h5"/>
+      </symbol>
+      <symbol id="icon-video" viewBox="0 0 24 24">
+        <rect x="3" y="6" width="13" height="12" rx="2"/>
+        <path d="M16 10.2 21 7v10l-5-3.2Z" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-hashtag" viewBox="0 0 24 24">
+        <path d="M5 9h14M5 15h14M10 4 7 20M17 4l-3 16"/>
+      </symbol>
+      <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+        <path d="M4 12h16M14 6l6 6-6 6"/>
+      </symbol>
+    </defs>
+  </svg>
+
   <!-- фоновые фигуры -->
-  <div class="bg-shapes">
+  <div class="bg-shapes" aria-hidden="true">
     <div class="shape shape--1"></div>
     <div class="shape shape--2"></div>
     <div class="shape shape--3"></div>
@@ -457,119 +552,119 @@
   <!-- карточка -->
   <main class="card">
     <div class="header">
-      <div class="header__icon"><i class="fas fa-graduation-cap"></i></div>
+      <div class="header__icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#icon-cap"></use></svg></div>
       <h1>ДГТУ · Навигатор</h1>
       <p>официальные и студенческие каналы</p>
     </div>
 
-    <!-- ===== СЕКЦИЯ: Telegram ===== -->
-    <div class="section-title">
-      <i class="fab fa-telegram-plane"></i> Telegram
-    </div>
-    <div class="links-grid">
-      <!-- 1. Telegram ДГТУ -->
-      <a href="https://t.me/dstu_live" class="link-card category-tg" target="_blank" rel="noopener">
-        <i class="fab fa-telegram-plane"></i>
-        <span class="link-card__title">ДГТУ в TG</span>
-        <span class="link-card__sub">новости, анонсы</span>
-        <span class="badge">подписаться</span>
-      </a>
+    <!-- ===== СЕКЦИЯ: Telegram & MAX ===== -->
+    <section aria-labelledby="sec-tg">
+      <h2 class="section-title" id="sec-tg">
+        <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
+      </h2>
+      <div class="links-grid">
+        <!-- 1. Telegram ДГТУ -->
+        <a href="https://t.me/dstu_live" class="link-card category-tg" style="--i:1" target="_blank" rel="noopener" aria-label="ДГТУ в Telegram: новости и анонсы">
+          <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg>
+          <span class="link-card__title">ДГТУ в TG</span>
+          <span class="link-card__sub">новости, анонсы</span>
+          <span class="badge">подписаться</span>
+        </a>
 
-      <!-- 2. Дни навигации Bot (Telegram) -->
-      <a href="@dn_donstu_bot" class="link-card category-nav" target="_blank" rel="noopener">
-        <i class="fas fa-compass"></i>
-        <span class="link-card__title">Дни навигации</span>
-        <span class="link-card__sub">ориентир в ДГТУ</span>
-        <span class="badge">навигатор</span>
-      </a>
-    </div>
+        <!-- 2. Ректор ДГТУ (MAX) -->
+        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" style="--i:2" target="_blank" rel="noopener" aria-label="Ректор ДГТУ Бесарион Месхи в MAX">
+          <svg class="icon" aria-hidden="true"><use href="#icon-user-tie"></use></svg>
+          <span class="link-card__title">Ректор ДГТУ</span>
+          <span class="link-card__sub">Бесарион Месхи</span>
+          <span class="badge">ректорат</span>
+        </a>
 
-    <!-- ===== СЕКЦИЯ: MAX ===== -->
-    <div class="section-title">
-      <i class="fas fa-bolt"></i> MAX
-    </div>
-    <div class="links-grid">
-      <!-- 3. Ректор ДГТУ (MAX) -->
-      <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" target="_blank" rel="noopener">
-        <i class="fas fa-user-tie"></i>
-        <span class="link-card__title">Ректор ДГТУ</span>
-        <span class="link-card__sub">Бесарион Месхи</span>
-        <span class="badge">ректорат</span>
-      </a>
+        <!-- 3. Профсоюз ДГТУ -->
+        <a href="https://vk.ru/profdstu" class="link-card category-other" style="--i:3" target="_blank" rel="noopener" aria-label="Профсоюз ДГТУ: студенческая защита">
+          <svg class="icon" aria-hidden="true"><use href="#icon-handshake"></use></svg>
+          <span class="link-card__title">Профсоюз ДГТУ</span>
+          <span class="link-card__sub">студенческая защита</span>
+          <span class="badge">профком</span>
+        </a>
 
-      <!-- 4. MAX канал -->
-      <a href="https://max.ru/dstu_live" class="link-card category-max" target="_blank" rel="noopener">
-        <i class="fas fa-bolt"></i>
-        <span class="link-card__title">MAX канал</span>
-        <span class="link-card__sub">актуальное</span>
-        <span class="badge">топ</span>
-      </a>
-    </div>
+        <!-- 4. MAX канал -->
+        <a href="https://max.ru/dstu_live" class="link-card category-max" style="--i:4" target="_blank" rel="noopener" aria-label="Официальный канал ДГТУ в MAX: актуальное">
+          <svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg>
+          <span class="link-card__title">MAX канал</span>
+          <span class="link-card__sub">актуальное</span>
+          <span class="badge">топ</span>
+        </a>
+
+        <!-- 5. Дни навигации (Telegram) -->
+        <a href="https://t.me/dni_navigacii" class="link-card category-nav" style="--i:5" target="_blank" rel="noopener" aria-label="Дни навигации в Telegram: ориентир в ДГТУ">
+          <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+          <span class="link-card__title">Дни навигации</span>
+          <span class="link-card__sub">ориентир в ДГТУ</span>
+          <span class="badge">навигатор</span>
+        </a>
+      </div>
+    </section>
 
     <!-- ===== СЕКЦИЯ: ВКонтакте ===== -->
-    <div class="section-title">
-      <i class="fab fa-vk"></i> ВКонтакте
-    </div>
-    <div class="links-grid">
-      <!-- 5. ВК · ДГТУ -->
-      <a href="https://vk.com/donstu" class="link-card category-vk" target="_blank" rel="noopener">
-        <i class="fab fa-vk"></i>
-        <span class="link-card__title">ВК · ДГТУ</span>
-        <span class="link-card__sub">официальная страница</span>
-        <span class="badge">vk.com</span>
-      </a>
+    <section aria-labelledby="sec-vk">
+      <h2 class="section-title" id="sec-vk">
+        <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg> ВКонтакте
+      </h2>
+      <div class="links-grid">
+        <!-- 6. ВК · ДГТУ -->
+        <a href="https://vk.com/donstu" class="link-card category-vk" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная страница ДГТУ ВКонтакте">
+          <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg>
+          <span class="link-card__title">ВК · ДГТУ</span>
+          <span class="link-card__sub">официальная страница</span>
+          <span class="badge">vk.com</span>
+        </a>
 
-      <!-- 6. Профсоюз ДГТУ (ВК) -->
-      <a href="https://vk.ru/profdstu" class="link-card category-other" target="_blank" rel="noopener">
-        <i class="fas fa-handshake"></i>
-        <span class="link-card__title">Профсоюз ДГТУ</span>
-        <span class="link-card__sub">студенческая защита</span>
-        <span class="badge">профком</span>
-      </a>
-
-      <!-- 7. Дни навигации ВК -->
-      <a href="https://vk.ru/dn.donstu" class="link-card category-nav" target="_blank" rel="noopener">
-        <i class="fas fa-map-signs"></i>
-        <span class="link-card__title">Дни навигации ВК</span>
-        <span class="link-card__sub">vk.ru/dn.donstu</span>
-        <span class="badge">навигатор</span>
-      </a>
-    </div>
+        <!-- 7. Дни навигации ВК -->
+        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" style="--i:2" target="_blank" rel="noopener" aria-label="Дни навигации ВКонтакте">
+          <svg class="icon" aria-hidden="true"><use href="#icon-map-signs"></use></svg>
+          <span class="link-card__title">Дни навигации ВК</span>
+          <span class="link-card__sub">vk.ru/dn.donstu</span>
+          <span class="badge">навигатор</span>
+        </a>
+      </div>
+    </section>
 
     <!-- ===== СЕКЦИЯ: Другие соцсети ===== -->
-    <div class="section-title">
-      <i class="fas fa-share-alt"></i> Другие платформы
-    </div>
-    <div class="links-grid">
-      <!-- 8. Одноклассники -->
-      <a href="https://ok.ru/donstu" class="link-card category-social" target="_blank" rel="noopener">
-        <i class="fab fa-odnoklassniki"></i>
-        <span class="link-card__title">Одноклассники</span>
-        <span class="link-card__sub">официальная группа</span>
-        <span class="badge">ok.ru</span>
-      </a>
+    <section aria-labelledby="sec-other">
+      <h2 class="section-title" id="sec-other">
+        <svg class="icon" aria-hidden="true"><use href="#icon-share"></use></svg> Другие платформы
+      </h2>
+      <div class="links-grid">
+        <!-- 8. Одноклассники -->
+        <a href="https://ok.ru/donstu" class="link-card category-social" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная группа ДГТУ в Одноклассниках">
+          <svg class="icon" aria-hidden="true"><use href="#icon-ok"></use></svg>
+          <span class="link-card__title">Одноклассники</span>
+          <span class="link-card__sub">официальная группа</span>
+          <span class="badge">ok.ru</span>
+        </a>
 
-      <!-- 9. Дзен -->
-      <a href="https://dzen.ru/donstu" class="link-card category-social" target="_blank" rel="noopener">
-        <i class="fas fa-newspaper"></i>
-        <span class="link-card__title">Дзен</span>
-        <span class="link-card__sub">публикации ДГТУ</span>
-        <span class="badge">dzen.ru</span>
-      </a>
+        <!-- 9. Дзен -->
+        <a href="https://dzen.ru/donstu" class="link-card category-social" style="--i:2" target="_blank" rel="noopener" aria-label="Публикации ДГТУ на Дзене">
+          <svg class="icon" aria-hidden="true"><use href="#icon-newspaper"></use></svg>
+          <span class="link-card__title">Дзен</span>
+          <span class="link-card__sub">публикации ДГТУ</span>
+          <span class="badge">dzen.ru</span>
+        </a>
 
-      <!-- 10. Rutube -->
-      <a href="https://rutube.ru/channel/24675086" class="link-card category-social" target="_blank" rel="noopener">
-        <i class="fas fa-video"></i>
-        <span class="link-card__title">Rutube</span>
-        <span class="link-card__sub">видеоканал ДГТУ</span>
-        <span class="badge">rutube</span>
-      </a>
-    </div>
+        <!-- 10. Rutube -->
+        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" style="--i:3" target="_blank" rel="noopener" aria-label="Видеоканал ДГТУ на Rutube">
+          <svg class="icon" aria-hidden="true"><use href="#icon-video"></use></svg>
+          <span class="link-card__title">Rutube</span>
+          <span class="link-card__sub">видеоканал ДГТУ</span>
+          <span class="badge">rutube</span>
+        </a>
+      </div>
+    </section>
 
     <!-- футер -->
     <div class="footer">
-      <span><i class="fas fa-hashtag"></i> ДГТУ · все каналы</span>
-      <span><i class="fas fa-arrow-right"></i> обновлено 2026</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#icon-hashtag"></use></svg> ДГТУ · все каналы</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg> обновлено 2026</span>
     </div>
   </main>
 </body>
