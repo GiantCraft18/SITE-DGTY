@@ -120,7 +120,7 @@
     /* ----- шапка ----- */
     .header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     .header__icon {
@@ -233,6 +233,65 @@
       color: rgba(255, 215, 0, 0.5);
     }
 
+    /* ===== БЫСТРЫЕ ФИЛЬТРЫ (ТАБЫ) ===== */
+    .tabs-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .tab-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.4);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.7);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn.active {
+      background: rgba(255, 215, 0, 0.12);
+      color: #ffd966;
+      border-color: rgba(255, 215, 0, 0.2);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
+    }
+
+    .tab-btn svg {
+      width: 1em;
+      height: 1em;
+    }
+
+    .tab-btn .badge-count {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.05rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.3);
+      margin-left: 0.2rem;
+    }
+
+    .tab-btn.active .badge-count {
+      background: rgba(255, 215, 0, 0.1);
+      color: rgba(255, 215, 0, 0.5);
+    }
+
     /* ----- структура: категории ----- */
     .section-title {
       color: rgba(255, 255, 255, 0.3);
@@ -274,6 +333,11 @@
       gap: 1.2rem;
       margin-top: 0.3rem;
       transition: all 0.3s ease;
+    }
+
+    /* Скрытие всей секции */
+    section.hidden-section {
+      display: none;
     }
 
     .link-card {
@@ -380,26 +444,13 @@
       margin-top: 0.1rem;
     }
 
-    /* цветовые метки категорий — делаем более выразительными */
-    .category-tg { 
-      border-left: 4px solid #27a0e6; 
-      border-left-color: #27a0e6;
-    }
-    .category-vk { 
-      border-left: 4px solid #4c7bb7; 
-    }
-    .category-other { 
-      border-left: 4px solid #ffb347; 
-    }
-    .category-social { 
-      border-left: 4px solid #ff6b6b; 
-    }
-    .category-max { 
-      border-left: 4px solid #a855f7; 
-    }
-    .category-nav { 
-      border-left: 4px solid #22d3ee; 
-    }
+    /* цветовые метки категорий */
+    .category-tg { border-left: 4px solid #27a0e6; }
+    .category-vk { border-left: 4px solid #4c7bb7; }
+    .category-other { border-left: 4px solid #ffb347; }
+    .category-social { border-left: 4px solid #ff6b6b; }
+    .category-max { border-left: 4px solid #a855f7; }
+    .category-nav { border-left: 4px solid #22d3ee; }
 
     /* ===== ВИЗУАЛЬНАЯ ИЕРАРХИЯ: выделение главной секции ===== */
     .section-primary .section-title {
@@ -512,6 +563,10 @@
         font-size: 0.9rem;
         padding: 0.7rem 1rem 0.7rem 2.8rem;
       }
+      .tab-btn {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.9rem;
+      }
     }
 
     @media (max-width: 480px) {
@@ -570,6 +625,17 @@
         font-size: 0.8rem;
         padding: 0.6rem 0.8rem 0.6rem 2.5rem;
       }
+      .tabs-container {
+        gap: 0.4rem;
+      }
+      .tab-btn {
+        font-size: 0.6rem;
+        padding: 0.3rem 0.7rem;
+        gap: 0.2rem;
+      }
+      .tab-btn .badge-count {
+        display: none;
+      }
     }
 
     @media (max-width: 380px) {
@@ -600,7 +666,7 @@
   </style>
 </head>
 <body>
-  <!-- ===== встроенные SVG-иконки (без внешних CDN) ===== -->
+  <!-- ===== встроенные SVG-иконки ===== -->
   <svg style="display:none" aria-hidden="true">
     <defs>
       <symbol id="icon-cap" viewBox="0 0 24 24">
@@ -671,6 +737,12 @@
       <symbol id="icon-close" viewBox="0 0 24 24">
         <path d="M6 6l12 12M18 6L6 18"/>
       </symbol>
+      <symbol id="icon-all" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -708,46 +780,61 @@
     </div>
     <div class="search-results-counter" id="resultsCounter"></div>
 
-    <!-- ===== СЕКЦИЯ: Telegram & MAX (главная, с визуальным выделением) ===== -->
-    <section class="section-primary" aria-labelledby="sec-tg">
+    <!-- ===== БЫСТРЫЕ ФИЛЬТРЫ (ТАБЫ) ===== -->
+    <div class="tabs-container" role="tablist">
+      <button class="tab-btn active" data-filter="all" role="tab" aria-selected="true">
+        <svg><use href="#icon-all"></use></svg> Все
+        <span class="badge-count">10</span>
+      </button>
+      <button class="tab-btn" data-filter="primary" role="tab" aria-selected="false">
+        <svg><use href="#icon-paper-plane"></use></svg> Telegram & MAX
+        <span class="badge-count">5</span>
+      </button>
+      <button class="tab-btn" data-filter="vk" role="tab" aria-selected="false">
+        <svg><use href="#icon-vk"></use></svg> ВКонтакте
+        <span class="badge-count">2</span>
+      </button>
+      <button class="tab-btn" data-filter="other" role="tab" aria-selected="false">
+        <svg><use href="#icon-share"></use></svg> Другие
+        <span class="badge-count">3</span>
+      </button>
+    </div>
+
+    <!-- ===== СЕКЦИЯ: Telegram & MAX ===== -->
+    <section class="section-primary" data-section="primary" aria-labelledby="sec-tg">
       <h2 class="section-title" id="sec-tg">
         <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
       </h2>
-      <div class="links-grid" data-section="primary">
-        <!-- 1. Telegram ДГТУ -->
-        <a href="https://t.me/dstu_live" class="link-card category-tg" style="--i:1" target="_blank" rel="noopener" aria-label="ДГТУ в Telegram: новости и анонсы" data-search="ДГТУ в TG новости анонсы Telegram">
+      <div class="links-grid">
+        <a href="https://t.me/dstu_live" class="link-card category-tg" style="--i:1" target="_blank" rel="noopener" data-search="ДГТУ в TG новости анонсы Telegram">
           <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg>
           <span class="link-card__title">ДГТУ в TG</span>
           <span class="link-card__sub">новости, анонсы</span>
           <span class="badge">подписаться</span>
         </a>
 
-        <!-- 2. Ректор ДГТУ (MAX) -->
-        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" style="--i:2" target="_blank" rel="noopener" aria-label="Ректор ДГТУ Бесарион Месхи в MAX" data-search="Ректор ДГТУ Бесарион Месхи MAX ректорат">
+        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" style="--i:2" target="_blank" rel="noopener" data-search="Ректор ДГТУ Бесарион Месхи MAX ректорат">
           <svg class="icon" aria-hidden="true"><use href="#icon-user-tie"></use></svg>
           <span class="link-card__title">Ректор ДГТУ</span>
           <span class="link-card__sub">Бесарион Месхи</span>
           <span class="badge">ректорат</span>
         </a>
 
-        <!-- 3. Профсоюз ДГТУ -->
-        <a href="https://vk.ru/profdstu" class="link-card category-other" style="--i:3" target="_blank" rel="noopener" aria-label="Профсоюз ДГТУ: студенческая защита" data-search="Профсоюз ДГТУ студенческая защита профком">
+        <a href="https://vk.ru/profdstu" class="link-card category-other" style="--i:3" target="_blank" rel="noopener" data-search="Профсоюз ДГТУ студенческая защита профком">
           <svg class="icon" aria-hidden="true"><use href="#icon-handshake"></use></svg>
           <span class="link-card__title">Профсоюз ДГТУ</span>
           <span class="link-card__sub">студенческая защита</span>
           <span class="badge">профком</span>
         </a>
 
-        <!-- 4. MAX канал -->
-        <a href="https://max.ru/dstu_live" class="link-card category-max" style="--i:4" target="_blank" rel="noopener" aria-label="Официальный канал ДГТУ в MAX: актуальное" data-search="MAX канал актуальное топ">
+        <a href="https://max.ru/dstu_live" class="link-card category-max" style="--i:4" target="_blank" rel="noopener" data-search="MAX канал актуальное топ">
           <svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg>
           <span class="link-card__title">MAX канал</span>
           <span class="link-card__sub">актуальное</span>
           <span class="badge">топ</span>
         </a>
 
-        <!-- 5. Дни навигации (Telegram) -->
-        <a href="https://t.me/dni_navigacii" class="link-card category-nav" style="--i:5" target="_blank" rel="noopener" aria-label="Дни навигации в Telegram: ориентир в ДГТУ" data-search="Дни навигации ориентир ДГТУ навигатор">
+        <a href="https://t.me/dni_navigacii" class="link-card category-nav" style="--i:5" target="_blank" rel="noopener" data-search="Дни навигации ориентир ДГТУ навигатор">
           <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
           <span class="link-card__title">Дни навигации</span>
           <span class="link-card__sub">ориентир в ДГТУ</span>
@@ -757,21 +844,19 @@
     </section>
 
     <!-- ===== СЕКЦИЯ: ВКонтакте ===== -->
-    <section aria-labelledby="sec-vk">
+    <section data-section="vk" aria-labelledby="sec-vk">
       <h2 class="section-title" id="sec-vk">
         <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg> ВКонтакте
       </h2>
-      <div class="links-grid" data-section="vk">
-        <!-- 6. ВК · ДГТУ -->
-        <a href="https://vk.com/donstu" class="link-card category-vk" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная страница ДГТУ ВКонтакте" data-search="ВК ДГТУ официальная страница ВКонтакте">
+      <div class="links-grid">
+        <a href="https://vk.com/donstu" class="link-card category-vk" style="--i:1" target="_blank" rel="noopener" data-search="ВК ДГТУ официальная страница ВКонтакте">
           <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg>
           <span class="link-card__title">ВК · ДГТУ</span>
           <span class="link-card__sub">официальная страница</span>
           <span class="badge">vk.com</span>
         </a>
 
-        <!-- 7. Дни навигации ВК -->
-        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" style="--i:2" target="_blank" rel="noopener" aria-label="Дни навигации ВКонтакте" data-search="Дни навигации ВК ВКонтакте навигатор dn.donstu">
+        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" style="--i:2" target="_blank" rel="noopener" data-search="Дни навигации ВК ВКонтакте навигатор dn.donstu">
           <svg class="icon" aria-hidden="true"><use href="#icon-map-signs"></use></svg>
           <span class="link-card__title">Дни навигации ВК</span>
           <span class="link-card__sub">vk.ru/dn.donstu</span>
@@ -781,29 +866,26 @@
     </section>
 
     <!-- ===== СЕКЦИЯ: Другие соцсети ===== -->
-    <section aria-labelledby="sec-other">
+    <section data-section="other" aria-labelledby="sec-other">
       <h2 class="section-title" id="sec-other">
         <svg class="icon" aria-hidden="true"><use href="#icon-share"></use></svg> Другие платформы
       </h2>
-      <div class="links-grid" data-section="other">
-        <!-- 8. Одноклассники -->
-        <a href="https://ok.ru/donstu" class="link-card category-social" style="--i:1" target="_blank" rel="noopener" aria-label="Официальная группа ДГТУ в Одноклассниках" data-search="Одноклассники официальная группа ok.ru">
+      <div class="links-grid">
+        <a href="https://ok.ru/donstu" class="link-card category-social" style="--i:1" target="_blank" rel="noopener" data-search="Одноклассники официальная группа ok.ru">
           <svg class="icon" aria-hidden="true"><use href="#icon-ok"></use></svg>
           <span class="link-card__title">Одноклассники</span>
           <span class="link-card__sub">официальная группа</span>
           <span class="badge">ok.ru</span>
         </a>
 
-        <!-- 9. Дзен -->
-        <a href="https://dzen.ru/donstu" class="link-card category-social" style="--i:2" target="_blank" rel="noopener" aria-label="Публикации ДГТУ на Дзене" data-search="Дзен публикации ДГТУ dzen.ru">
+        <a href="https://dzen.ru/donstu" class="link-card category-social" style="--i:2" target="_blank" rel="noopener" data-search="Дзен публикации ДГТУ dzen.ru">
           <svg class="icon" aria-hidden="true"><use href="#icon-newspaper"></use></svg>
           <span class="link-card__title">Дзен</span>
           <span class="link-card__sub">публикации ДГТУ</span>
           <span class="badge">dzen.ru</span>
         </a>
 
-        <!-- 10. Rutube -->
-        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" style="--i:3" target="_blank" rel="noopener" aria-label="Видеоканал ДГТУ на Rutube" data-search="Rutube видеоканал ДГТУ rutube">
+        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" style="--i:3" target="_blank" rel="noopener" data-search="Rutube видеоканал ДГТУ rutube">
           <svg class="icon" aria-hidden="true"><use href="#icon-video"></use></svg>
           <span class="link-card__title">Rutube</span>
           <span class="link-card__sub">видеоканал ДГТУ</span>
@@ -827,42 +909,65 @@
       const searchClear = document.getElementById('searchClear');
       const resultsCounter = document.getElementById('resultsCounter');
       const allCards = document.querySelectorAll('.link-card');
-      const sections = document.querySelectorAll('section');
+      const allSections = document.querySelectorAll('section[data-section]');
+      const tabButtons = document.querySelectorAll('.tab-btn');
 
-      // Функция поиска
-      function performSearch(query) {
+      let currentFilter = 'all';
+      let currentSearchQuery = '';
+
+      // ===== ФИЛЬТРАЦИЯ ПО ТАБАМ =====
+      function filterByTab(filter) {
+        currentFilter = filter;
+
+        // Обновляем активный таб
+        tabButtons.forEach(btn => {
+          const isActive = btn.dataset.filter === filter;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive);
+        });
+
+        // Показываем/скрываем секции
+        allSections.forEach(section => {
+          const sectionName = section.dataset.section;
+          if (filter === 'all' || sectionName === filter) {
+            section.classList.remove('hidden-section');
+          } else {
+            section.classList.add('hidden-section');
+          }
+        });
+
+        // Применяем поиск поверх фильтра
+        applySearch(currentSearchQuery);
+      }
+
+      // ===== ПОИСК =====
+      function applySearch(query) {
         const trimmed = query.trim().toLowerCase();
+        currentSearchQuery = query;
+
         let visibleCount = 0;
 
         allCards.forEach(card => {
+          // Проверяем, видима ли секция карточки
+          const section = card.closest('section[data-section]');
+          const isSectionVisible = !section || !section.classList.contains('hidden-section');
+
           const searchData = (card.getAttribute('data-search') || '').toLowerCase();
           const title = (card.querySelector('.link-card__title')?.textContent || '').toLowerCase();
           const sub = (card.querySelector('.link-card__sub')?.textContent || '').toLowerCase();
 
-          const match = trimmed === '' || 
-                        searchData.includes(trimmed) || 
-                        title.includes(trimmed) || 
-                        sub.includes(trimmed);
+          const matchSearch = trimmed === '' || 
+                              searchData.includes(trimmed) || 
+                              title.includes(trimmed) || 
+                              sub.includes(trimmed);
 
-          if (match) {
+          const isVisible = isSectionVisible && matchSearch;
+
+          if (isVisible) {
             card.classList.remove('hidden');
             visibleCount++;
           } else {
             card.classList.add('hidden');
-          }
-        });
-
-        // Показываем/скрываем секции
-        sections.forEach(section => {
-          const grid = section.querySelector('.links-grid');
-          if (!grid) return;
-          const visibleCards = grid.querySelectorAll('.link-card:not(.hidden)');
-          const title = section.querySelector('.section-title');
-          
-          if (visibleCards.length === 0 && trimmed !== '') {
-            if (title) title.classList.add('hidden');
-          } else {
-            if (title) title.classList.remove('hidden');
           }
         });
 
@@ -879,29 +984,40 @@
         }
       }
 
-      // Обработчик ввода
+      // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+
+      // Поиск
       searchInput.addEventListener('input', function() {
-        performSearch(this.value);
+        applySearch(this.value);
       });
 
       // Очистка поиска
       searchClear.addEventListener('click', function() {
         searchInput.value = '';
-        performSearch('');
+        applySearch('');
         searchInput.focus();
       });
 
-      // Обработка клавиши Escape для очистки
+      // Escape — очистка поиска
       searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           searchInput.value = '';
-          performSearch('');
+          applySearch('');
           searchInput.blur();
         }
       });
 
-      // Инициализация — все карточки видны
-      performSearch('');
+      // Табы
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const filter = this.dataset.filter;
+          filterByTab(filter);
+        });
+      });
+
+      // ===== ИНИЦИАЛИЗАЦИЯ =====
+      // Показываем всё
+      filterByTab('all');
     })();
   </script>
 </body>
