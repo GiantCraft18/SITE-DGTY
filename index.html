@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Signal Origin — Админ-панель бота</title>
+    <title>Signal Origin — Админ-панель бота + Python</title>
     <style>
         /* ===== RESET & BASE ===== */
         * {
@@ -259,8 +259,24 @@
             margin-bottom: 30px;
         }
 
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1000px) {
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         @media (max-width: 800px) {
             .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3 {
                 grid-template-columns: 1fr;
             }
         }
@@ -352,6 +368,69 @@
 
         .form-row .form-group {
             flex: 1;
+        }
+
+        /* ===== CODE EDITOR ===== */
+        .code-editor {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .code-editor textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            background: #080b10;
+            border: 1px solid #1f2a35;
+            border-radius: 12px;
+            color: #e8edf5;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            resize: vertical;
+            tab-size: 4;
+        }
+
+        .code-editor textarea:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
+        }
+
+        .code-editor .line-numbers {
+            position: absolute;
+            left: 8px;
+            top: 16px;
+            color: #5a6f80;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            text-align: right;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.5;
+        }
+
+        .code-output {
+            background: #080b10;
+            border-radius: 12px;
+            padding: 12px 16px;
+            min-height: 60px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #1f2a35;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-output.success {
+            border-color: #4caf50;
+        }
+        .code-output.error {
+            border-color: #f44336;
         }
 
         /* ===== COMMANDS LIST ===== */
@@ -607,7 +686,7 @@
         <div class="header">
             <div class="logo" onclick="showToast('⚡ Signal Origin — Админ-панель', 'info')">
                 <h1>⚡ Signal Origin</h1>
-                <span>Админ-панель управления ботом</span>
+                <span>Админ-панель управления ботом + Python</span>
             </div>
             <div class="header-actions">
                 <button class="btn btn-outline" onclick="refreshBotInfo()">🔄 Обновить бота</button>
@@ -698,6 +777,48 @@
             </div>
         </div>
 
+        <!-- ===== GRID: PYTHON EDITOR + SCRIPTS ===== -->
+        <div class="grid-2" style="margin-top: 10px;">
+            <!-- ===== PYTHON EDITOR ===== -->
+            <div class="card">
+                <h3>🐍 Python-редактор <span class="badge">Pyodide</span></h3>
+
+                <div class="code-editor">
+                    <textarea id="pythonCode" placeholder="# Пиши Python-код здесь&#10;print('Hello, Signal Origin!')&#10;&#10;# Можно использовать библиотеки:&#10;# - math, random, json, datetime&#10;# - и многие другие"></textarea>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                    <button class="btn btn-success" onclick="runPython()">▶️ Выполнить</button>
+                    <button class="btn btn-outline" onclick="savePythonCode()">💾 Сохранить скрипт</button>
+                    <button class="btn btn-outline" onclick="exportPythonCode()">📤 Экспорт</button>
+                    <button class="btn btn-danger btn-sm" onclick="clearPythonOutput()">🗑️ Очистить вывод</button>
+                </div>
+
+                <div class="code-output" id="pythonOutput">▶️ Вывод появится здесь...</div>
+            </div>
+
+            <!-- ===== SAVED SCRIPTS ===== -->
+            <div class="card">
+                <h3>📂 Сохранённые скрипты <span class="badge" id="scriptsCount">0</span></h3>
+
+                <div id="scriptsList">
+                    <div class="log-empty">Нет сохранённых скриптов</div>
+                </div>
+
+                <div style="margin-top:14px; border-top: 1px solid #1a2430; padding-top:14px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Имя скрипта</label>
+                            <input type="text" id="scriptName" placeholder="Мой_скрипт" />
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveScript()" style="width:100%; justify-content:center;">
+                        💾 Сохранить как новый скрипт
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== LOGS ===== -->
         <div class="card" style="margin-top: 10px;">
             <h3>📜 Логи действий <span class="badge" id="logsCount">0</span></h3>
@@ -716,6 +837,240 @@
     </div>
 
     <script>
+        // =============================================
+        // ===== PYTHON (Pyodide) =====
+        // =============================================
+
+        let pyodide = null;
+        let pythonCodeSaved = '';
+
+        // Загрузка Pyodide
+        async function loadPyodide() {
+            if (pyodide) return pyodide;
+
+            try {
+                showToast('🔄 Загрузка Python...', 'info');
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
+                document.head.appendChild(script);
+
+                await new Promise((resolve, reject) => {
+                    script.onload = resolve;
+                    script.onerror = reject;
+                });
+
+                pyodide = await loadPyodide({
+                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'
+                });
+
+                // Загружаем полезные библиотеки
+                await pyodide.loadPackage(['micropip', 'numpy', 'pandas']);
+
+                showToast('✅ Python загружен!', 'success');
+                addLog('system', 'Python загружен', 'Pyodide', 'success');
+
+                return pyodide;
+            } catch (e) {
+                showToast('❌ Ошибка загрузки Python: ' + e.message, 'danger');
+                addLog('system', 'Ошибка загрузки Python', e.message, 'danger');
+                return null;
+            }
+        }
+
+        async function runPython() {
+            const code = document.getElementById('pythonCode').value;
+            const output = document.getElementById('pythonOutput');
+
+            if (!code.trim()) {
+                showToast('⚠️ Введите код', 'warning');
+                return;
+            }
+
+            output.textContent = '⏳ Выполнение...';
+            output.className = 'code-output';
+
+            const py = await loadPyodide();
+            if (!py) {
+                output.textContent = '❌ Ошибка: Python не загружен';
+                output.className = 'code-output error';
+                return;
+            }
+
+            try {
+                // Перенаправляем stdout
+                py.runPython(`
+                    import sys
+                    from io import StringIO
+                    sys.stdout = StringIO()
+                `);
+
+                // Выполняем код пользователя
+                await py.runPythonAsync(code);
+
+                // Получаем вывод
+                const stdout = py.runPython('sys.stdout.getvalue()');
+
+                output.textContent = stdout || '✅ Код выполнен успешно (нет вывода)';
+                output.className = 'code-output success';
+
+                addLog('user', 'Выполнен Python-код', `длина: ${code.length} символов`, 'success');
+                showToast('✅ Код выполнен', 'success');
+
+            } catch (e) {
+                output.textContent = `❌ Ошибка:\n${e.message}`;
+                output.className = 'code-output error';
+                addLog('system', 'Ошибка Python', e.message, 'danger');
+                showToast('❌ Ошибка выполнения', 'danger');
+            }
+        }
+
+        function savePythonCode() {
+            const code = document.getElementById('pythonCode').value;
+            pythonCodeSaved = code;
+            localStorage.setItem('signalOriginPythonCode', code);
+            showToast('💾 Код сохранён в localStorage', 'success');
+            addLog('system', 'Сохранён Python-код', `длина: ${code.length}`, 'info');
+        }
+
+        function loadPythonCode() {
+            const saved = localStorage.getItem('signalOriginPythonCode');
+            if (saved) {
+                document.getElementById('pythonCode').value = saved;
+                pythonCodeSaved = saved;
+            } else {
+                // Пример кода по умолчанию
+                document.getElementById('pythonCode').value =
+                    `# ===== Signal Origin Python =====
+        # Пример: получение данных о подписчиках
+        import random
+        import datetime
+
+        # Генерация случайного числа подписчиков
+        subscribers = random.randint(800, 900)
+        print(f"📊 Подписчиков: {subscribers}")
+
+        # Текущее время
+        now = datetime.datetime.now()
+        print(f"🕒 {now.strftime('%H:%M:%S')}")
+
+        # Можно делать запросы к Telegram API через fetch
+        # используй micropip для установки библиотек
+        `;
+            }
+        }
+
+        function exportPythonCode() {
+            const code = document.getElementById('pythonCode').value;
+            if (!code.trim()) {
+                showToast('⚠️ Код пуст', 'warning');
+                return;
+            }
+
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `signal_origin_script_${new Date().toISOString().slice(0,10)}.py`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📤 Скрипт экспортирован', 'success');
+            addLog('system', 'Экспортирован Python-скрипт', '', 'info');
+        }
+
+        function clearPythonOutput() {
+            document.getElementById('pythonOutput').textContent = '▶️ Вывод очищен';
+            document.getElementById('pythonOutput').className = 'code-output';
+        }
+
+        // =============================================
+        // ===== СОХРАНЁННЫЕ СКРИПТЫ =====
+        // =============================================
+
+        let savedScripts = [];
+
+        function loadScripts() {
+            const saved = localStorage.getItem('signalOriginScripts');
+            if (saved) {
+                try {
+                    savedScripts = JSON.parse(saved);
+                } catch (e) {
+                    savedScripts = [];
+                }
+            }
+            renderScripts();
+        }
+
+        function saveScripts() {
+            localStorage.setItem('signalOriginScripts', JSON.stringify(savedScripts));
+            renderScripts();
+        }
+
+        function saveScript() {
+            const name = document.getElementById('scriptName').value.trim() || `Скрипт_${savedScripts.length + 1}`;
+            const code = document.getElementById('pythonCode').value.trim();
+
+            if (!code) {
+                showToast('⚠️ Напишите код перед сохранением', 'warning');
+                return;
+            }
+
+            savedScripts.push({
+                id: Date.now(),
+                name: name,
+                code: code,
+                created: new Date().toLocaleString()
+            });
+
+            document.getElementById('scriptName').value = '';
+            saveScripts();
+            showToast(`✅ Скрипт "${name}" сохранён`, 'success');
+            addLog('system', 'Сохранён скрипт', name, 'success');
+        }
+
+        function loadScript(id) {
+            const script = savedScripts.find(s => s.id === id);
+            if (script) {
+                document.getElementById('pythonCode').value = script.code;
+                showToast(`📂 Загружен скрипт: ${script.name}`, 'info');
+                addLog('system', 'Загружен скрипт', script.name, 'info');
+            }
+        }
+
+        function deleteScript(id) {
+            const script = savedScripts.find(s => s.id === id);
+            if (script && confirm(`Удалить скрипт "${script.name}"?`)) {
+                savedScripts = savedScripts.filter(s => s.id !== id);
+                saveScripts();
+                showToast(`🗑️ Скрипт "${script.name}" удалён`, 'info');
+                addLog('system', 'Удалён скрипт', script.name, 'warning');
+            }
+        }
+
+        function renderScripts() {
+            const container = document.getElementById('scriptsList');
+            document.getElementById('scriptsCount').textContent = savedScripts.length;
+
+            if (savedScripts.length === 0) {
+                container.innerHTML = `<div class="log-empty">Нет сохранённых скриптов</div>`;
+                return;
+            }
+
+            let html = '';
+            savedScripts.forEach(s => {
+                html += `
+                    <div class="command-item" onclick="loadScript(${s.id})">
+                        <span class="cmd">📜 ${s.name}</span>
+                        <span class="desc">${s.created}</span>
+                        <div class="cmd-actions">
+                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteScript(${s.id})">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
         // =============================================
         // ===== ДАННЫЕ =====
         // =============================================
@@ -991,18 +1346,24 @@
         }
 
         function clearAllData() {
-            if (confirm('⚠️ Сбросить все данные? (токен, команды, логи)')) {
+            if (confirm('⚠️ Сбросить все данные? (токен, команды, логи, скрипты, Python-код)')) {
                 if (confirm('Вы уверены?')) {
                     localStorage.removeItem('signalOriginBotData');
+                    localStorage.removeItem('signalOriginPythonCode');
+                    localStorage.removeItem('signalOriginScripts');
                     botConfig = { token: '', displayName: '', username: '', channel: '', language: 'ru' };
                     commands = [];
                     logs = [];
                     botInfo = null;
+                    savedScripts = [];
                     renderAll();
+                    renderScripts();
                     document.getElementById('botToken').value = '';
                     document.getElementById('botDisplayName').value = '';
                     document.getElementById('botUsernameInput').value = '';
                     document.getElementById('botChannel').value = '';
+                    document.getElementById('pythonCode').value = '';
+                    document.getElementById('pythonOutput').textContent = '▶️ Вывод появится здесь...';
                     showToast('🗑️ Все данные сброшены', 'danger');
                 }
             }
@@ -1013,7 +1374,7 @@
                 showToast('📭 Нет логов для экспорта', 'warning');
                 return;
             }
-            const data = JSON.stringify({ logs, commands, botConfig }, null, 2);
+            const data = JSON.stringify({ logs, commands, botConfig, savedScripts }, null, 2);
             const blob = new Blob([data], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1166,6 +1527,8 @@
         // =============================================
 
         loadData();
+        loadPythonCode();
+        loadScripts();
 
         // Если есть токен — автоматически проверяем бота
         if (botConfig.token) {
@@ -1179,7 +1542,7 @@
             }, 600);
         }
 
-        // Авто-сохранение при вводе с задержкой
+        // Авто-сохранение при вводе
         let saveTimeout;
 
         function autoSave() {
@@ -1194,6 +1557,14 @@
         document.getElementById('botUsernameInput').addEventListener('input', autoSave);
         document.getElementById('botChannel').addEventListener('input', autoSave);
         document.getElementById('botLanguage').addEventListener('change', autoSave);
+
+        // Авто-сохранение Python-кода
+        document.getElementById('pythonCode').addEventListener('input', function() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                savePythonCode();
+            }, 1500);
+        });
 
         // Enter для добавления команды
         document.getElementById('newCommand').addEventListener('keydown', function(e) {
@@ -1210,10 +1581,20 @@
             }
         });
 
+        // Ctrl+Enter для выполнения Python
+        document.getElementById('pythonCode').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                runPython();
+            }
+        });
+
         console.log('🚀 Signal Origin Админ-панель загружена!');
         console.log(`📊 Команд: ${commands.length}`);
         console.log(`📜 Логов: ${logs.length}`);
         console.log(`🤖 Бот: ${botConfig.token ? 'настроен' : 'не настроен'}`);
+        console.log(`🐍 Python: ${pyodide ? 'загружен' : 'ожидает'}`);
+        console.log(`📂 Скриптов: ${savedScripts.length}`);
     </script>
 
 </body>
