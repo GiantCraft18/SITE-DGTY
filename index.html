@@ -1,1799 +1,400 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Signal Origin — Админ-панель бота + Python</title>
-    <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0b0e14;
-            color: #e8edf5;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .dashboard {
-            max-width: 1280px;
-            width: 100%;
-            background: #131a22;
-            border-radius: 32px;
-            padding: 30px 35px 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            border: 1px solid #1f2a35;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #4fc3f7, #7c4dff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .logo h1:hover {
-            transform: scale(1.02);
-        }
-
-        .logo span {
-            font-size: 14px;
-            color: #8899aa;
-            display: block;
-            -webkit-text-fill-color: #8899aa;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            background: #1f2a35;
-            border: none;
-            color: #c8d6e5;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid transparent;
-            user-select: none;
-        }
-
-        .btn:hover {
-            background: #2a3745;
-            border-color: #4fc3f7;
-            color: #fff;
-            transform: scale(1.02);
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        .btn-primary {
-            background: #4fc3f7;
-            color: #0b0e14;
-        }
-
-        .btn-primary:hover {
-            background: #3db8e8;
-            color: #0b0e14;
-        }
-
-        .btn-success {
-            background: #4caf50;
-            color: #fff;
-        }
-
-        .btn-success:hover {
-            background: #388e3c;
-        }
-
-        .btn-danger {
-            background: #f44336;
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #d32f2f;
-        }
-
-        .btn-warning {
-            background: #ffb300;
-            color: #0b0e14;
-        }
-
-        .btn-warning:hover {
-            background: #e6a200;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #2a3745;
-        }
-
-        .btn-outline:hover {
-            border-color: #4fc3f7;
-        }
-
-        .btn-sm {
-            padding: 4px 14px;
-            font-size: 12px;
-            border-radius: 30px;
-        }
-
-        .btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* ===== BOT STATUS ===== */
-        .bot-status {
-            background: #0f171f;
-            border-radius: 20px;
-            padding: 20px 24px;
-            border: 1px solid #1f2a35;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            transition: 0.3s;
-        }
-
-        .bot-status:hover {
-            border-color: #2a3745;
-        }
-
-        .bot-status .info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .bot-status .info .status-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            display: inline-block;
-            transition: 0.3s;
-        }
-
-        .bot-status .info .status-dot.online {
-            background: #4caf50;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
-            animation: pulse-online 2s infinite;
-        }
-
-        @keyframes pulse-online {
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(76, 175, 80, 0.6);
-            }
-        }
-
-        .bot-status .info .status-dot.offline {
-            background: #f44336;
-        }
-        .bot-status .info .status-dot.pending {
-            background: #ffb300;
-            animation: pulse-dot 1.5s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
-        }
-
-        .bot-status .info .bot-name {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .bot-status .info .bot-username {
-            color: #4fc3f7;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .bot-status .info .bot-username:hover {
-            text-decoration: underline;
-        }
-
-        .bot-status .info .sub-count {
-            color: #8899aa;
-            font-size: 14px;
-        }
-
-        .bot-status .actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* ===== GRID ===== */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 800px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ===== CARDS ===== */
-        .card {
-            background: #0f171f;
-            border-radius: 20px;
-            padding: 20px 24px;
-            border: 1px solid #1a2430;
-            transition: 0.25s ease;
-        }
-
-        .card:hover {
-            border-color: #2a3745;
-        }
-
-        .card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card h3 .badge {
-            background: #1f2a35;
-            font-size: 12px;
-            font-weight: 400;
-            padding: 2px 10px;
-            border-radius: 30px;
-            color: #8899aa;
-        }
-
-        /* ===== INPUTS ===== */
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: #8899aa;
-            margin-bottom: 4px;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px 14px;
-            background: #0b0e14;
-            border: 1px solid #1f2a35;
-            border-radius: 12px;
-            color: #e8edf5;
-            font-size: 14px;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #4fc3f7;
-            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
-        }
-
-        .form-group input::placeholder {
-            color: #5a6f80;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .form-group .hint {
-            font-size: 12px;
-            color: #5a6f80;
-            margin-top: 4px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        /* ===== COMMANDS LIST ===== */
-        .command-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #0b0e14;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            border: 1px solid #1a2430;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .command-item:hover {
-            border-color: #2a3745;
-            background: #131a22;
-        }
-
-        .command-item .cmd {
-            font-weight: 600;
-            color: #4fc3f7;
-            min-width: 70px;
-        }
-
-        .command-item .desc {
-            color: #8899aa;
-            font-size: 13px;
-            flex: 1;
-            margin: 0 12px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .command-item .cmd-status {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 30px;
-            margin-right: 8px;
-        }
-
-        .cmd-status.active {
-            background: #1b3a1f;
-            color: #4caf50;
-        }
-        .cmd-status.inactive {
-            background: #3a1b1b;
-            color: #f44336;
-        }
-
-        .command-item .cmd-actions {
-            display: flex;
-            gap: 4px;
-        }
-
-        /* ===== SCRIPTS LIST ===== */
-        .script-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #0b0e14;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            border: 1px solid #1a2430;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .script-item:hover {
-            border-color: #2a3745;
-            background: #131a22;
-        }
-
-        .script-item .sname {
-            font-weight: 600;
-            color: #4fc3f7;
-        }
-
-        .script-item .sdesc {
-            color: #8899aa;
-            font-size: 13px;
-            flex: 1;
-            margin: 0 12px;
-        }
-
-        /* ===== CODE EDITOR ===== */
-        .code-editor {
-            position: relative;
-            margin-bottom: 12px;
-        }
-
-        .code-editor textarea {
-            width: 100%;
-            min-height: 220px;
-            padding: 16px;
-            background: #080b10;
-            border: 1px solid #1f2a35;
-            border-radius: 12px;
-            color: #e8edf5;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 14px;
-            line-height: 1.8;
-            resize: vertical;
-            tab-size: 4;
-        }
-
-        .code-editor textarea:focus {
-            outline: none;
-            border-color: #4fc3f7;
-            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
-        }
-
-        .code-output {
-            background: #080b10;
-            border-radius: 12px;
-            padding: 12px 16px;
-            min-height: 70px;
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #1f2a35;
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            font-size: 14px;
-            line-height: 1.7;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .code-output.success {
-            border-color: #4caf50;
-        }
-        .code-output.error {
-            border-color: #f44336;
-        }
-        .code-output.loading {
-            border-color: #ffb300;
-        }
-
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: #131a22;
-            border: 1px solid #2a3745;
-            border-radius: 28px;
-            padding: 32px 36px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
-
-        .modal h2 {
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-
-        .modal p {
-            color: #8899aa;
-            line-height: 1.6;
-            margin: 12px 0;
-        }
-
-        .modal .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .modal .modal-actions .btn {
-            flex: 1;
-            justify-content: center;
-            min-width: 80px;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* ===== LOGS ===== */
-        .log-container {
-            max-height: 300px;
-            overflow-y: auto;
-            background: #0b0e14;
-            border-radius: 12px;
-            padding: 4px 0;
-            min-height: 60px;
-        }
-
-        .log-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .log-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .log-container::-webkit-scrollbar-thumb {
-            background: #2a3745;
-            border-radius: 4px;
-        }
-
-        .log-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 12px;
-            border-bottom: 1px solid #0f171f;
-            font-size: 13px;
-            align-items: center;
-            transition: 0.2s;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .log-item:hover {
-            background: #131a22;
-        }
-
-        .log-item .log-user {
-            color: #4fc3f7;
-            font-weight: 500;
-        }
-
-        .log-item .log-action {
-            color: #c8d6e5;
-            flex: 1;
-            margin: 0 12px;
-        }
-
-        .log-item .log-time {
-            color: #5a6f80;
-            font-size: 12px;
-        }
-
-        .log-item .log-badge {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 30px;
-        }
-
-        .log-badge.success {
-            background: #1b3a1f;
-            color: #4caf50;
-        }
-        .log-badge.warning {
-            background: #3a2e1b;
-            color: #ffb300;
-        }
-        .log-badge.danger {
-            background: #3a1b1b;
-            color: #f44336;
-        }
-        .log-badge.info {
-            background: #1b2a3a;
-            color: #4fc3f7;
-        }
-
-        .log-empty {
-            color: #5a6f80;
-            text-align: center;
-            padding: 20px 0;
-            font-size: 14px;
-        }
-
-        .log-tools {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-
-        /* ===== TOAST ===== */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            background: #1a2430;
-            border: 1px solid #2a3745;
-            border-radius: 16px;
-            padding: 14px 22px;
-            color: #e8edf5;
-            font-size: 14px;
-            animation: slideIn 0.4s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 260px;
-            max-width: 450px;
-        }
-
-        .toast.success {
-            border-left: 4px solid #4caf50;
-        }
-        .toast.info {
-            border-left: 4px solid #4fc3f7;
-        }
-        .toast.warning {
-            border-left: 4px solid #ffb300;
-        }
-        .toast.danger {
-            border-left: 4px solid #f44336;
-        }
-
-        .toast .toast-close {
-            background: none;
-            border: none;
-            color: #5a6f80;
-            font-size: 18px;
-            cursor: pointer;
-            margin-left: auto;
-            padding: 0 4px;
-        }
-
-        .toast .toast-close:hover {
-            color: #fff;
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes slideIn {
-            from {
-                transform: translateX(40px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #1f2a35;
-            border-top-color: #4fc3f7;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            .dashboard {
-                padding: 18px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .bot-status {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .form-row {
-                flex-direction: column;
-            }
-            .command-item {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .command-item .desc {
-                margin: 0;
-                width: 100%;
-                white-space: normal;
-            }
-            .toast {
-                min-width: unset;
-                width: calc(100vw - 40px);
-            }
-            .modal {
-                padding: 24px 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Навигатор ДГТУ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* ----- общие сбросы и фон ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(145deg, #0b1a2e 0%, #1a2f44 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ----- анимированные фоновые фигуры ----- */
+    .bg-shapes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      animation: float 20s infinite alternate ease-in-out;
+    }
+
+    .shape--1 {
+      width: 600px;
+      height: 600px;
+      top: -200px;
+      right: -150px;
+      background: radial-gradient(circle at 30% 30%, rgba(0, 150, 255, 0.08), transparent 70%);
+      animation-duration: 25s;
+    }
+
+    .shape--2 {
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      left: -100px;
+      background: radial-gradient(circle at 70% 70%, rgba(255, 200, 50, 0.06), transparent 70%);
+      animation-duration: 30s;
+      animation-delay: -5s;
+    }
+
+    .shape--3 {
+      width: 200px;
+      height: 200px;
+      top: 40%;
+      right: 5%;
+      background: rgba(255, 255, 255, 0.02);
+      animation-duration: 18s;
+      animation-delay: -2s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      100% { transform: translate(30px, -40px) scale(1.1) rotate(10deg); }
+    }
+
+    /* ----- главная карточка ----- */
+    .card {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-radius: 48px;
+      padding: 2.5rem 2.5rem 3rem;
+      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes cardIn {
+      0% { opacity: 0; transform: translateY(40px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ----- шапка ----- */
+    .header {
+      text-align: center;
+      margin-bottom: 2.8rem;
+    }
+
+    .header__icon {
+      font-size: 2.6rem;
+      color: #ffd966;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+      animation: pulseGlow 3s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+      50% { text-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+      100% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 0.3rem;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 400;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+    }
+
+    /* ----- сетка ссылок ----- */
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .link-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 28px;
+      padding: 1.5rem 0.5rem 1.2rem;
+      text-align: center;
+      text-decoration: none;
+      color: #f0f4ff;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(4px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      animation: linkPop 0.6s ease backwards;
+      cursor: pointer;
+    }
+
+    .link-card:nth-child(1) { animation-delay: 0.03s; }
+    .link-card:nth-child(2) { animation-delay: 0.06s; }
+    .link-card:nth-child(3) { animation-delay: 0.09s; }
+    .link-card:nth-child(4) { animation-delay: 0.12s; }
+    .link-card:nth-child(5) { animation-delay: 0.15s; }
+    .link-card:nth-child(6) { animation-delay: 0.18s; }
+    .link-card:nth-child(7) { animation-delay: 0.21s; }
+    .link-card:nth-child(8) { animation-delay: 0.24s; }
+    .link-card:nth-child(9) { animation-delay: 0.27s; }
+    .link-card:nth-child(10) { animation-delay: 0.30s; }
+    .link-card:nth-child(11) { animation-delay: 0.33s; }
+
+    @keyframes linkPop {
+      0% { opacity: 0; transform: scale(0.9) translateY(15px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .link-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 215, 0, 0.2);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    .link-card:active {
+      transform: scale(0.97);
+    }
+
+    .link-card i {
+      font-size: 2.2rem;
+      color: #ffd966;
+      transition: transform 0.2s;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.2));
+    }
+
+    .link-card:hover i {
+      transform: scale(1.1) rotate(-2deg);
+      color: #ffe285;
+    }
+
+    .link-card__title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+
+    .link-card__sub {
+      font-size: 0.7rem;
+      opacity: 0.5;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      margin-top: -0.2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255, 215, 0, 0.1);
+      padding: 0.15rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #ffd966;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      margin-top: 0.2rem;
+    }
+
+    .category-tg { border-left: 3px solid #27a0e6; }
+    .category-vk { border-left: 3px solid #4c7bb7; }
+    .category-other { border-left: 3px solid #ffb347; }
+    .category-social { border-left: 3px solid #ff6b6b; }
+    .category-max { border-left: 3px solid #a855f7; }
+
+    /* ----- футер ----- */
+    .footer {
+      margin-top: 2.8rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 2rem;
+    }
+
+    .footer span {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .footer i {
+      font-size: 0.9rem;
+      color: rgba(255, 215, 0, 0.2);
+    }
+
+    /* ----- адаптив ----- */
+    @media (max-width: 600px) {
+      .card { padding: 1.8rem 1.2rem 2rem; border-radius: 32px; }
+      .header h1 { font-size: 1.8rem; }
+      .links-grid { grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+      .link-card { padding: 1.2rem 0.2rem; }
+      .link-card i { font-size: 1.8rem; }
+      .link-card__title { font-size: 0.9rem; }
+    }
+
+    @media (max-width: 420px) {
+      .links-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+    }
+  </style>
 </head>
 <body>
+  <!-- фоновые фигуры -->
+  <div class="bg-shapes">
+    <div class="shape shape--1"></div>
+    <div class="shape shape--2"></div>
+    <div class="shape shape--3"></div>
+  </div>
 
-    <!-- ===== TOAST CONTAINER ===== -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- ===== MODAL ===== -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal" id="modalContent">
-            <h2 id="modalTitle">Редактирование команды</h2>
-            <div id="modalBody">
-                <div class="form-group">
-                    <label>Команда</label>
-                    <input type="text" id="editCommand" placeholder="/start" />
-                </div>
-                <div class="form-group">
-                    <label>Описание</label>
-                    <input type="text" id="editCommandDesc" placeholder="Описание команды" />
-                </div>
-                <div class="form-group">
-                    <label>Статус</label>
-                    <select id="editCommandStatus">
-                        <option value="active">Активна</option>
-                        <option value="inactive">Неактивна</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Ответ бота (текст)</label>
-                    <textarea id="editCommandResponse" placeholder="Текст ответа бота на команду..."></textarea>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-outline" onclick="closeCommandModal()">Отмена</button>
-                <button class="btn btn-danger" onclick="deleteCommandFromModal()">🗑️ Удалить</button>
-                <button class="btn btn-primary" onclick="saveCommandFromModal()">💾 Сохранить</button>
-            </div>
-        </div>
+  <!-- карточка -->
+  <main class="card">
+    <div class="header">
+      <div class="header__icon"><i class="fas fa-graduation-cap"></i></div>
+      <h1>ДГТУ · Навигатор</h1>
+      <p>официальные и студенческие каналы</p>
     </div>
 
-    <!-- ===== DASHBOARD ===== -->
-    <div class="dashboard">
+    <!-- сетка ссылок -->
+    <div class="links-grid">
+      <!-- 1. Telegram ДГТУ -->
+      <a href="https://t.me/donstu_official" class="link-card category-tg" target="_blank" rel="noopener">
+        <i class="fab fa-telegram-plane"></i>
+        <span class="link-card__title">ДГТУ в TG</span>
+        <span class="link-card__sub">новости, анонсы</span>
+        <span class="badge"><i class="fas fa-paper-plane" style="margin-right: 4px;"></i>подписаться</span>
+      </a>
 
-        <!-- ===== HEADER ===== -->
-        <div class="header">
-            <div class="logo" onclick="showToast('⚡ Signal Origin — Админ-панель', 'info')">
-                <h1>⚡ Signal Origin</h1>
-                <span>Админ-панель управления ботом + Python</span>
-            </div>
-            <div class="header-actions">
-                <button class="btn btn-outline" onclick="refreshBotInfo()">🔄 Обновить бота</button>
-                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Сбросить всё</button>
-            </div>
-        </div>
+      <!-- 2. Ректор ДГТУ -->
+      <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" target="_blank" rel="noopener">
+        <i class="fas fa-user-tie"></i>
+        <span class="link-card__title">Ректор ДГТУ</span>
+        <span class="link-card__sub">Бесарион Месхи</span>
+        <span class="badge"><i class="fas fa-crown"></i> ректорат</span>
+      </a>
 
-        <!-- ===== BOT STATUS ===== -->
-        <div class="bot-status" id="botStatus">
-            <div class="info">
-                <span class="status-dot offline" id="botStatusDot"></span>
-                <div>
-                    <div class="bot-name" id="botName">Бот не подключён</div>
-                    <div class="bot-username" id="botUsername">@не_настроен</div>
-                </div>
-                <span class="sub-count" id="botSubCount">👥 подписчики: 0</span>
-            </div>
-            <div class="actions">
-                <button class="btn btn-success" onclick="connectBot()" id="connectBtn">🔗 Подключить бота</button>
-                <button class="btn btn-outline" onclick="testBot()" id="testBtn">📡 Тест</button>
-            </div>
-        </div>
+      <!-- 3. Профсоюз ДГТУ -->
+      <a href="https://t.me/prof_donstu" class="link-card category-other" target="_blank" rel="noopener">
+        <i class="fas fa-handshake"></i>
+        <span class="link-card__title">Профсоюз ДГТУ</span>
+        <span class="link-card__sub">студенческая защита</span>
+        <span class="badge"><i class="fas fa-users"></i> профком</span>
+      </a>
 
-        <!-- ===== GRID: BOT SETTINGS + COMMANDS ===== -->
-        <div class="grid-2">
-            <!-- ===== BOT SETTINGS ===== -->
-            <div class="card">
-                <h3>🤖 Настройки бота <span class="badge">токен хранится локально</span></h3>
+      <!-- 4. MAX канал -->
+      <a href="https://max.ru/dstu_live" class="link-card category-max" target="_blank" rel="noopener">
+        <i class="fas fa-bolt"></i>
+        <span class="link-card__title">MAX канал</span>
+        <span class="link-card__sub">актуальное</span>
+        <span class="badge"><i class="fas fa-fire"></i> топ</span>
+      </a>
 
-                <div class="form-group">
-                    <label>Токен бота</label>
-                    <input type="password" id="botToken" placeholder="Введите токен от @BotFather" />
-                    <div class="hint">Токен сохраняется в localStorage вашего браузера</div>
-                </div>
+      <!-- 5. Дни навигации (НОВЫЙ КАНАЛ) -->
+      <a href="https://t.me/dni_navigacii" class="link-card category-other" target="_blank" rel="noopener">
+        <i class="fas fa-compass"></i>
+        <span class="link-card__title">Дни навигации</span>
+        <span class="link-card__sub">ориентир в ДГТУ</span>
+        <span class="badge"><i class="fas fa-map-pin"></i> навигатор</span>
+      </a>
 
-                <div class="form-group">
-                    <label>Имя бота (отображается)</label>
-                    <input type="text" id="botDisplayName" placeholder="Например: SignalBot" />
-                </div>
+      <!-- 6. ВК · ДГТУ -->
+      <a href="https://vk.com/donstu" class="link-card category-vk" target="_blank" rel="noopener">
+        <i class="fab fa-vk"></i>
+        <span class="link-card__title">ВК · ДГТУ</span>
+        <span class="link-card__sub">официальная страница</span>
+        <span class="badge"><i class="fas fa-check-circle"></i> vk.com/donstu</span>
+      </a>
 
-                <div class="form-group">
-                    <label>Username бота</label>
-                    <input type="text" id="botUsernameInput" placeholder="@SignalOriginBot" />
-                </div>
+      <!-- 7. ВК · Студсовет -->
+      <a href="https://vk.com/studsovet_donstu" class="link-card category-vk" target="_blank" rel="noopener">
+        <i class="fab fa-vk"></i>
+        <span class="link-card__title">ВК · Студсовет</span>
+        <span class="link-card__sub">студенческая жизнь</span>
+        <span class="badge"><i class="fas fa-users"></i> актив</span>
+      </a>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Канал для статистики</label>
-                        <input type="text" id="botChannel" placeholder="@TheSignalOrigin" />
-                    </div>
-                    <div class="form-group">
-                        <label>Язык</label>
-                        <select id="botLanguage">
-                            <option value="ru">Русский</option>
-                            <option value="en">English</option>
-                        </select>
-                    </div>
-                </div>
+      <!-- 8. ВК · Спорт ДГТУ -->
+      <a href="https://vk.com/sport_donstu" class="link-card category-vk" target="_blank" rel="noopener">
+        <i class="fab fa-vk"></i>
+        <span class="link-card__title">ВК · Спорт ДГТУ</span>
+        <span class="link-card__sub">спортивные события</span>
+        <span class="badge"><i class="fas fa-running"></i> физкультура</span>
+      </a>
 
-                <button class="btn btn-primary" onclick="saveBotSettings()" style="width:100%; justify-content:center; margin-top:4px;">
-                    💾 Сохранить настройки
-                </button>
-            </div>
+      <!-- 9. ВК · Наука ДГТУ -->
+      <a href="https://vk.com/science_donstu" class="link-card category-vk" target="_blank" rel="noopener">
+        <i class="fab fa-vk"></i>
+        <span class="link-card__title">ВК · Наука ДГТУ</span>
+        <span class="link-card__sub">исследования, проекты</span>
+        <span class="badge"><i class="fas fa-flask"></i> наука</span>
+      </a>
 
-            <!-- ===== COMMANDS ===== -->
-            <div class="card">
-                <h3>📋 Команды бота <span class="badge" id="commandsCount">0</span></h3>
+      <!-- 10. Одноклассники -->
+      <a href="https://ok.ru/donstu" class="link-card category-social" target="_blank" rel="noopener">
+        <i class="fab fa-odnoklassniki"></i>
+        <span class="link-card__title">Одноклассники</span>
+        <span class="link-card__sub">официальная группа</span>
+        <span class="badge"><i class="fas fa-users"></i> ok.ru</span>
+      </a>
 
-                <div id="commandsList">
-                    <div class="log-empty">Нет команд. Добавьте первую 👇</div>
-                </div>
+      <!-- 11. Дзен -->
+      <a href="https://dzen.ru/donstu" class="link-card category-social" target="_blank" rel="noopener">
+        <i class="fas fa-newspaper"></i>
+        <span class="link-card__title">Дзен</span>
+        <span class="link-card__sub">публикации ДГТУ</span>
+        <span class="badge"><i class="fas fa-edit"></i> dzen.ru</span>
+      </a>
 
-                <div style="margin-top:14px; border-top: 1px solid #1a2430; padding-top:14px;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Команда</label>
-                            <input type="text" id="newCommand" placeholder="/start" />
-                        </div>
-                        <div class="form-group">
-                            <label>Описание</label>
-                            <input type="text" id="newCommandDesc" placeholder="Запуск бота" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Ответ бота</label>
-                        <input type="text" id="newCommandResponse" placeholder="Текст ответа на команду..." />
-                    </div>
-                    <button class="btn btn-success" onclick="addCommand()" style="width:100%; justify-content:center;">
-                        ➕ Добавить команду
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== PYTHON EDITOR ===== -->
-        <div class="card" style="margin-bottom:20px;">
-            <h3>🐍 Python-редактор <span class="badge" id="pythonStatus">⏳ загрузка...</span></h3>
-
-            <div class="code-editor">
-                <textarea id="pythonCode" placeholder="# Пиши Python-код здесь&#10;print('Hello, Signal Origin!')"></textarea>
-            </div>
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                <button class="btn btn-success" onclick="runPython()" id="runBtn">▶️ Выполнить</button>
-                <button class="btn btn-outline" onclick="savePythonCode()">💾 Сохранить код</button>
-                <button class="btn btn-outline" onclick="exportPythonCode()">📤 Экспорт .py</button>
-                <button class="btn btn-danger btn-sm" onclick="clearPythonOutput()">🗑️ Очистить вывод</button>
-            </div>
-
-            <div class="code-output" id="pythonOutput">▶️ Нажми «Выполнить», чтобы запустить код</div>
-
-            <div style="margin-top:14px; border-top: 1px solid #1a2430; padding-top:14px;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Имя для сохранения скрипта</label>
-                        <input type="text" id="scriptName" placeholder="Мой_скрипт" />
-                    </div>
-                    <div class="form-group" style="display:flex; align-items:flex-end;">
-                        <button class="btn btn-primary" onclick="saveScript()" style="width:100%; justify-content:center;">
-                            💾 Сохранить скрипт
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== SCRIPTS ===== -->
-        <div class="card" style="margin-bottom:20px;">
-            <h3>📂 Сохранённые скрипты <span class="badge" id="scriptsCount">0</span></h3>
-
-            <div id="scriptsList">
-                <div class="log-empty">Нет сохранённых скриптов</div>
-            </div>
-        </div>
-
-        <!-- ===== LOGS ===== -->
-        <div class="card">
-            <h3>📜 Логи действий <span class="badge" id="logsCount">0</span></h3>
-
-            <div class="log-container" id="logContainer">
-                <div class="log-empty">Логов пока нет. Действия пользователей будут отображаться здесь.</div>
-            </div>
-
-            <div class="log-tools">
-                <button class="btn btn-sm btn-outline" onclick="addTestLog()">🧪 Добавить тестовый лог</button>
-                <button class="btn btn-sm btn-danger" onclick="clearLogs()">🗑️ Очистить</button>
-                <button class="btn btn-sm btn-outline" onclick="exportLogs()">📤 Экспорт JSON</button>
-            </div>
-        </div>
-
+      <!-- 12. Rutube -->
+      <a href="https://rutube.ru/channel/24675086" class="link-card category-social" target="_blank" rel="noopener">
+        <i class="fas fa-video"></i>
+        <span class="link-card__title">Rutube</span>
+        <span class="link-card__sub">видеоканал ДГТУ</span>
+        <span class="badge"><i class="fas fa-play"></i> rutube.ru</span>
+      </a>
     </div>
 
-    <script>
-        // =============================================
-        // ===== КОМАНДЫ — ПОЛНОСТЬЮ НАСТРАИВАЕМЫЕ =====
-        // =============================================
-
-        let editingCommandIndex = null;
-
-        function addCommand() {
-            const cmdInput = document.getElementById('newCommand');
-            const descInput = document.getElementById('newCommandDesc');
-            const respInput = document.getElementById('newCommandResponse');
-
-            const cmd = cmdInput.value.trim();
-            const desc = descInput.value.trim();
-            const response = respInput.value.trim();
-
-            if (!cmd) {
-                showToast('⚠️ Введите команду', 'warning');
-                cmdInput.focus();
-                return;
-            }
-
-            if (!cmd.startsWith('/')) {
-                showToast('⚠️ Команда должна начинаться с /', 'warning');
-                cmdInput.focus();
-                return;
-            }
-
-            if (commands.some(c => c.command === cmd)) {
-                showToast('⚠️ Команда уже существует', 'warning');
-                return;
-            }
-
-            commands.push({
-                command: cmd,
-                description: desc || 'Без описания',
-                response: response || '',
-                status: 'active'
-            });
-
-            cmdInput.value = '';
-            descInput.value = '';
-            respInput.value = '';
-
-            saveData();
-            renderCommands();
-            showToast(`✅ Команда ${cmd} добавлена`, 'success');
-            addLog('system', 'Добавлена команда', cmd, 'success');
-        }
-
-        function openCommandModal(index) {
-            editingCommandIndex = index;
-            const cmd = commands[index];
-
-            document.getElementById('modalTitle').textContent = '✏️ Редактирование команды';
-            document.getElementById('editCommand').value = cmd.command;
-            document.getElementById('editCommandDesc').value = cmd.description || '';
-            document.getElementById('editCommandStatus').value = cmd.status || 'active';
-            document.getElementById('editCommandResponse').value = cmd.response || '';
-
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
-        function closeCommandModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-            editingCommandIndex = null;
-        }
-
-        function saveCommandFromModal() {
-            if (editingCommandIndex === null) return;
-
-            const cmd = document.getElementById('editCommand').value.trim();
-            const desc = document.getElementById('editCommandDesc').value.trim();
-            const status = document.getElementById('editCommandStatus').value;
-            const response = document.getElementById('editCommandResponse').value.trim();
-
-            if (!cmd) {
-                showToast('⚠️ Команда не может быть пустой', 'warning');
-                return;
-            }
-
-            if (!cmd.startsWith('/')) {
-                showToast('⚠️ Команда должна начинаться с /', 'warning');
-                return;
-            }
-
-            // Проверяем, что команда не занята другой
-            const oldCmd = commands[editingCommandIndex].command;
-            if (cmd !== oldCmd && commands.some(c => c.command === cmd)) {
-                showToast('⚠️ Команда уже существует', 'warning');
-                return;
-            }
-
-            commands[editingCommandIndex] = {
-                command: cmd,
-                description: desc || 'Без описания',
-                status: status,
-                response: response || ''
-            };
-
-            saveData();
-            renderCommands();
-            closeCommandModal();
-            showToast(`✅ Команда ${cmd} обновлена`, 'success');
-            addLog('system', 'Обновлена команда', cmd, 'success');
-        }
-
-        function deleteCommandFromModal() {
-            if (editingCommandIndex === null) return;
-            const cmd = commands[editingCommandIndex].command;
-
-            if (confirm(`Удалить команду ${cmd}?`)) {
-                commands.splice(editingCommandIndex, 1);
-                saveData();
-                renderCommands();
-                closeCommandModal();
-                showToast(`🗑️ Команда ${cmd} удалена`, 'info');
-                addLog('system', 'Удалена команда', cmd, 'warning');
-            }
-        }
-
-        function toggleCommandStatus(index) {
-            const cmd = commands[index];
-            cmd.status = cmd.status === 'active' ? 'inactive' : 'active';
-            saveData();
-            renderCommands();
-            const statusText = cmd.status === 'active' ? 'активирована' : 'деактивирована';
-            showToast(`🔄 Команда ${cmd.command} ${statusText}`, 'info');
-            addLog('system', `Команда ${statusText}`, cmd.command, 'info');
-        }
-
-        // =============================================
-        // ===== PYTHON (Pyodide) =====
-        // =============================================
-
-        let pyodideInstance = null;
-        let pyodideLoading = false;
-        let pyodideLoaded = false;
-
-        function cleanCode(code) {
-            let lines = code.split('\n');
-            while (lines.length > 0 && lines[0].trim() === '') lines.shift();
-            while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
-
-            let minIndent = Infinity;
-            for (let line of lines) {
-                if (line.trim() === '') continue;
-                let indent = line.match(/^(\s*)/)[0].length;
-                if (indent < minIndent) minIndent = indent;
-            }
-            if (minIndent > 0 && minIndent < Infinity) {
-                lines = lines.map(line => line.trim() === '' ? '' : line.slice(minIndent));
-            }
-            while (lines.length > 0 && lines[0].trim() === '') lines.shift();
-            while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
-            return lines.join('\n');
-        }
-
-        async function loadPyodideInstance() {
-            if (pyodideLoaded && pyodideInstance) return pyodideInstance;
-            if (pyodideLoading) {
-                return new Promise((resolve) => {
-                    const check = setInterval(() => {
-                        if (pyodideLoaded) { clearInterval(check);
-                            resolve(pyodideInstance); }
-                    }, 200);
-                });
-            }
-
-            pyodideLoading = true;
-            document.getElementById('pythonStatus').textContent = '⏳ загрузка Pyodide...';
-            document.getElementById('pythonStatus').style.color = '#ffb300';
-
-            try {
-                await new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
-                    script.onload = resolve;
-                    script.onerror = reject;
-                    document.head.appendChild(script);
-                });
-
-                let attempts = 0;
-                while (typeof loadPyodide === 'undefined' && attempts < 50) {
-                    await new Promise(r => setTimeout(r, 100));
-                    attempts++;
-                }
-                if (typeof loadPyodide === 'undefined') throw new Error('loadPyodide не загрузился');
-
-                pyodideInstance = await loadPyodide({
-                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'
-                });
-                if (!pyodideInstance) throw new Error('Pyodide не инициализировался');
-
-                try { await pyodideInstance.loadPackage('micropip'); } catch (e) {}
-                try { await pyodideInstance.loadPackage('numpy'); } catch (e) {}
-                try { await pyodideInstance.loadPackage('pandas'); } catch (e) {}
-
-                pyodideLoaded = true;
-                pyodideLoading = false;
-                document.getElementById('pythonStatus').textContent = '✅ Python готов';
-                document.getElementById('pythonStatus').style.color = '#4caf50';
-
-                showToast('✅ Python (Pyodide) загружен!', 'success');
-                addLog('system', 'Python загружен', 'Pyodide v0.26.4', 'success');
-
-                const codeArea = document.getElementById('pythonCode');
-                if (!codeArea.value.trim() || codeArea.value.trim() ===
-                    '# Пиши Python-код здесь\nprint(\'Hello, Signal Origin!\')') {
-                    codeArea.value =
-                        `import random
-        import datetime
-
-        print("🚀 Python работает!")
-        subscribers = random.randint(800, 1000)
-        print(f"📊 Подписчиков: {subscribers}")
-        now = datetime.datetime.now()
-        print(f"🕒 Время: {now.strftime('%H:%M:%S')}")
-        numbers = [random.randint(1, 100) for _ in range(5)]
-        print(f"📊 Случайные числа: {numbers}")
-        print(f"📊 Сумма: {sum(numbers)}")`;
-                }
-                return pyodideInstance;
-            } catch (e) {
-                pyodideLoading = false;
-                document.getElementById('pythonStatus').textContent = '❌ Ошибка загрузки';
-                document.getElementById('pythonStatus').style.color = '#f44336';
-                showToast('❌ Ошибка загрузки Python: ' + e.message, 'danger');
-                addLog('system', 'Ошибка загрузки Python', e.message, 'danger');
-                console.error('Pyodide error:', e);
-                return null;
-            }
-        }
-
-        async function runPython() {
-            const code = document.getElementById('pythonCode').value;
-            const output = document.getElementById('pythonOutput');
-
-            if (!code.trim()) {
-                showToast('⚠️ Введите код', 'warning');
-                return;
-            }
-
-            const cleanedCode = cleanCode(code);
-            output.textContent = '⏳ Загрузка Python...';
-            output.className = 'code-output loading';
-
-            const py = await loadPyodideInstance();
-            if (!py) {
-                output.textContent = '❌ Ошибка: Python не загружен. Обнови страницу и попробуй снова.';
-                output.className = 'code-output error';
-                return;
-            }
-
-            output.textContent = '⏳ Выполнение...';
-            output.className = 'code-output loading';
-
-            try {
-                py.runPython(`
-                    import sys
-                    from io import StringIO
-                    sys.stdout = StringIO()
-                `);
-                await py.runPythonAsync(cleanedCode);
-                const stdout = py.runPython('sys.stdout.getvalue()');
-
-                output.textContent = stdout.trim() || '✅ Код выполнен успешно (нет вывода)';
-                output.className = 'code-output success';
-                addLog('user', 'Выполнен Python-код', `длина: ${cleanedCode.length} симв.`, 'success');
-                showToast('✅ Код выполнен', 'success');
-            } catch (e) {
-                output.textContent = `❌ Ошибка:\n${e.message}`;
-                output.className = 'code-output error';
-                addLog('system', 'Ошибка Python', e.message, 'danger');
-                showToast('❌ Ошибка выполнения', 'danger');
-            }
-        }
-
-        function savePythonCode() {
-            const code = document.getElementById('pythonCode').value;
-            if (code.trim()) {
-                localStorage.setItem('signalOriginPythonCode', code);
-                showToast('💾 Код сохранён', 'success');
-            } else {
-                showToast('⚠️ Код пуст', 'warning');
-            }
-        }
-
-        function loadPythonCode() {
-            const saved = localStorage.getItem('signalOriginPythonCode');
-            if (saved) document.getElementById('pythonCode').value = saved;
-        }
-
-        function exportPythonCode() {
-            const code = document.getElementById('pythonCode').value;
-            if (!code.trim()) {
-                showToast('⚠️ Код пуст', 'warning');
-                return;
-            }
-            const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `signal_origin_script_${new Date().toISOString().slice(0,10)}.py`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('📤 Скрипт экспортирован', 'success');
-            addLog('system', 'Экспортирован Python-скрипт', '', 'info');
-        }
-
-        function clearPythonOutput() {
-            document.getElementById('pythonOutput').textContent = '▶️ Вывод очищен';
-            document.getElementById('pythonOutput').className = 'code-output';
-        }
-
-        // =============================================
-        // ===== СОХРАНЁННЫЕ СКРИПТЫ =====
-        // =============================================
-
-        let savedScripts = [];
-
-        function loadScripts() {
-            const saved = localStorage.getItem('signalOriginScripts');
-            if (saved) {
-                try { savedScripts = JSON.parse(saved); } catch (e) { savedScripts = []; }
-            }
-            renderScripts();
-        }
-
-        function saveScriptsData() {
-            localStorage.setItem('signalOriginScripts', JSON.stringify(savedScripts));
-            renderScripts();
-        }
-
-        function saveScript() {
-            const name = document.getElementById('scriptName').value.trim() || `Скрипт_${savedScripts.length + 1}`;
-            const code = document.getElementById('pythonCode').value.trim();
-            if (!code) {
-                showToast('⚠️ Напишите код перед сохранением', 'warning');
-                return;
-            }
-            savedScripts.push({ id: Date.now(), name: name, code: code, created: new Date().toLocaleString() });
-            document.getElementById('scriptName').value = '';
-            saveScriptsData();
-            showToast(`✅ Скрипт "${name}" сохранён`, 'success');
-            addLog('system', 'Сохранён скрипт', name, 'success');
-        }
-
-        function loadScript(id) {
-            const script = savedScripts.find(s => s.id === id);
-            if (script) {
-                document.getElementById('pythonCode').value = script.code;
-                showToast(`📂 Загружен скрипт: ${script.name}`, 'info');
-                addLog('system', 'Загружен скрипт', script.name, 'info');
-            }
-        }
-
-        function deleteScript(id) {
-            const script = savedScripts.find(s => s.id === id);
-            if (script && confirm(`Удалить скрипт "${script.name}"?`)) {
-                savedScripts = savedScripts.filter(s => s.id !== id);
-                saveScriptsData();
-                showToast(`🗑️ Скрипт "${script.name}" удалён`, 'info');
-                addLog('system', 'Удалён скрипт', script.name, 'warning');
-            }
-        }
-
-        function renderScripts() {
-            const container = document.getElementById('scriptsList');
-            document.getElementById('scriptsCount').textContent = savedScripts.length;
-            if (savedScripts.length === 0) {
-                container.innerHTML = `<div class="log-empty">Нет сохранённых скриптов</div>`;
-                return;
-            }
-            let html = '';
-            savedScripts.forEach(s => {
-                html += `
-                    <div class="script-item" onclick="loadScript(${s.id})">
-                        <span class="sname">📜 ${s.name}</span>
-                        <span class="sdesc">${s.created}</span>
-                        <div class="cmd-actions">
-                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteScript(${s.id})">✕</button>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // =============================================
-        // ===== ДАННЫЕ =====
-        // =============================================
-
-        let botConfig = { token: '', displayName: '', username: '', channel: '', language: 'ru' };
-        let commands = [];
-        let logs = [];
-        let botInfo = null;
-
-        function loadData() {
-            const saved = localStorage.getItem('signalOriginBotData');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    botConfig = data.botConfig || botConfig;
-                    commands = data.commands || [];
-                    logs = data.logs || [];
-                    botInfo = data.botInfo || null;
-                } catch (e) { console.error('Ошибка загрузки данных:', e); }
-            }
-            renderAll();
-        }
-
-        function saveData() {
-            const data = { botConfig, commands, logs, botInfo };
-            localStorage.setItem('signalOriginBotData', JSON.stringify(data));
-        }
-
-        // =============================================
-        // ===== БОТ =====
-        // =============================================
-
-        function saveBotSettings() {
-            const token = document.getElementById('botToken').value.trim();
-            const displayName = document.getElementById('botDisplayName').value.trim();
-            const username = document.getElementById('botUsernameInput').value.trim();
-            const channel = document.getElementById('botChannel').value.trim();
-            const language = document.getElementById('botLanguage').value;
-
-            botConfig.token = token;
-            botConfig.displayName = displayName || 'Signal Bot';
-            botConfig.username = username || '@signal_bot';
-            botConfig.channel = channel || '';
-            botConfig.language = language;
-
-            saveData();
-            renderAll();
-            showToast('✅ Настройки сохранены!', 'success');
-            if (token) getBotInfo(token);
-        }
-
-        function connectBot() {
-            const token = document.getElementById('botToken').value.trim();
-            if (!token) {
-                showToast('⚠️ Сначала введите токен бота', 'warning');
-                document.getElementById('botToken').focus();
-                return;
-            }
-            getBotInfo(token);
-        }
-
-        async function getBotInfo(token) {
-            const connectBtn = document.getElementById('connectBtn');
-            connectBtn.disabled = true;
-            connectBtn.innerHTML = '<span class="spinner"></span> Подключение...';
-
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-                const data = await response.json();
-                if (data.ok) {
-                    botInfo = data.result;
-                    botConfig.displayName = data.result.first_name || botConfig.displayName;
-                    botConfig.username = `@${data.result.username}` || botConfig.username;
-                    document.getElementById('botDisplayName').value = botConfig.displayName;
-                    document.getElementById('botUsernameInput').value = botConfig.username;
-                    saveData();
-                    renderAll();
-                    showToast(`✅ Бот ${data.result.first_name} подключён!`, 'success');
-                    addLog('system', 'Бот подключён', `@${data.result.username}`, 'success');
-                    if (botConfig.channel) getSubscriberCount(token, botConfig.channel);
-                } else {
-                    showToast(`❌ Ошибка: ${data.description}`, 'danger');
-                    addLog('system', 'Ошибка подключения', data.description, 'danger');
-                }
-            } catch (e) {
-                showToast('❌ Не удалось подключиться к Telegram API', 'danger');
-                addLog('system', 'Ошибка сети', e.message, 'danger');
-            }
-            connectBtn.disabled = false;
-            connectBtn.innerHTML = '🔗 Подключить бота';
-        }
-
-        async function getSubscriberCount(token, channel) {
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${token}/getChatMemberCount?chat_id=${channel}`);
-                const data = await response.json();
-                if (data.ok) {
-                    document.getElementById('botSubCount').textContent = `👥 подписчики: ${data.result}`;
-                } else {
-                    document.getElementById('botSubCount').textContent = `👥 подписчики: ошибка`;
-                }
-            } catch (e) {
-                document.getElementById('botSubCount').textContent = `👥 подписчики: ошибка`;
-            }
-        }
-
-        async function testBot() {
-            const token = document.getElementById('botToken').value.trim();
-            if (!token) {
-                showToast('⚠️ Сначала введите токен бота', 'warning');
-                document.getElementById('botToken').focus();
-                return;
-            }
-            const testBtn = document.getElementById('testBtn');
-            testBtn.disabled = true;
-            testBtn.innerHTML = '<span class="spinner"></span>';
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-                const data = await response.json();
-                if (data.ok) {
-                    showToast(`✅ Бот работает! Имя: ${data.result.first_name}`, 'success');
-                    addLog('system', 'Тест бота', 'успешно', 'success');
-                } else {
-                    showToast(`❌ Ошибка: ${data.description}`, 'danger');
-                    addLog('system', 'Тест бота', data.description, 'danger');
-                }
-            } catch (e) {
-                showToast('❌ Бот не отвечает. Проверьте токен.', 'danger');
-                addLog('system', 'Тест бота', 'ошибка сети', 'danger');
-            }
-            testBtn.disabled = false;
-            testBtn.innerHTML = '📡 Тест';
-        }
-
-        function refreshBotInfo() {
-            const token = document.getElementById('botToken').value.trim();
-            if (token) {
-                getBotInfo(token);
-                if (botConfig.channel) getSubscriberCount(token, botConfig.channel);
-                showToast('🔄 Данные обновлены', 'info');
-            } else {
-                showToast('⚠️ Токен не задан', 'warning');
-            }
-        }
-
-        // =============================================
-        // ===== ЛОГИ =====
-        // =============================================
-
-        function addLog(user, action, detail, type = 'info') {
-            const time = new Date();
-            logs.unshift({
-                id: Date.now() + Math.random(),
-                user,
-                action,
-                detail: detail || '',
-                type,
-                time: time.toLocaleTimeString(),
-                date: time.toLocaleDateString()
-            });
-            if (logs.length > 200) logs = logs.slice(0, 200);
-            saveData();
-            renderLogs();
-            updateLogsCount();
-        }
-
-        function clearLogs() {
-            if (logs.length === 0) { showToast('📭 Логи уже пусты', 'info'); return; }
-            if (confirm('Очистить все логи?')) {
-                logs = [];
-                saveData();
-                renderLogs();
-                updateLogsCount();
-                showToast('🗑️ Логи очищены', 'info');
-            }
-        }
-
-        function clearAllData() {
-            if (confirm('⚠️ Сбросить все данные? (токен, команды, логи, скрипты)')) {
-                if (confirm('Вы уверены?')) {
-                    localStorage.removeItem('signalOriginBotData');
-                    localStorage.removeItem('signalOriginPythonCode');
-                    localStorage.removeItem('signalOriginScripts');
-                    botConfig = { token: '', displayName: '', username: '', channel: '', language: 'ru' };
-                    commands = [];
-                    logs = [];
-                    botInfo = null;
-                    savedScripts = [];
-                    renderAll();
-                    renderScripts();
-                    document.getElementById('botToken').value = '';
-                    document.getElementById('botDisplayName').value = '';
-                    document.getElementById('botUsernameInput').value = '';
-                    document.getElementById('botChannel').value = '';
-                    document.getElementById('pythonCode').value = '';
-                    document.getElementById('pythonOutput').textContent = '▶️ Вывод очищен';
-                    document.getElementById('pythonOutput').className = 'code-output';
-                    showToast('🗑️ Все данные сброшены', 'danger');
-                }
-            }
-        }
-
-        function exportLogs() {
-            if (logs.length === 0) { showToast('📭 Нет логов для экспорта', 'warning'); return; }
-            const data = JSON.stringify({ logs, commands, botConfig, savedScripts }, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `signal_origin_backup_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('📤 Данные экспортированы', 'success');
-        }
-
-        function addTestLog() {
-            const users = ['Алексей', 'Мария', 'Дмитрий', 'Екатерина', 'Андрей'];
-            const actions = ['Запустил бота', 'Использовал команду', 'Отправил сообщение', 'Настроил параметры'];
-            const types = ['success', 'info', 'warning', 'info'];
-            addLog(users[Math.floor(Math.random() * users.length)],
-                actions[Math.floor(Math.random() * actions.length)],
-                'Действие в боте',
-                types[Math.floor(Math.random() * types.length)]);
-        }
-
-        // =============================================
-        // ===== ОТРИСОВКА =====
-        // =============================================
-
-        function renderAll() {
-            renderBotStatus();
-            renderCommands();
-            renderLogs();
-            updateLogsCount();
-            fillFormFields();
-        }
-
-        function renderBotStatus() {
-            const dot = document.getElementById('botStatusDot');
-            const name = document.getElementById('botName');
-            const username = document.getElementById('botUsername');
-
-            if (botConfig.token && botInfo) {
-                dot.className = 'status-dot online';
-                name.textContent = botInfo.first_name || botConfig.displayName || 'Signal Bot';
-                username.textContent = `@${botInfo.username}` || botConfig.username || '@signal_bot';
-            } else if (botConfig.token) {
-                dot.className = 'status-dot pending';
-                name.textContent = botConfig.displayName || 'Ожидание...';
-                username.textContent = botConfig.username || '@проверка';
-            } else {
-                dot.className = 'status-dot offline';
-                name.textContent = 'Бот не подключён';
-                username.textContent = '@не_настроен';
-                document.getElementById('botSubCount').textContent = '👥 подписчики: 0';
-            }
-        }
-
-        function renderCommands() {
-            const container = document.getElementById('commandsList');
-
-            if (commands.length === 0) {
-                container.innerHTML = `<div class="log-empty">Нет команд. Добавьте первую 👇</div>`;
-                document.getElementById('commandsCount').textContent = '0';
-                return;
-            }
-
-            let html = '';
-            commands.forEach((cmd, index) => {
-                const statusClass = cmd.status === 'active' ? 'active' : 'inactive';
-                const statusText = cmd.status === 'active' ? '🟢 Активна' : '🔴 Неактивна';
-                html += `
-                    <div class="command-item" onclick="openCommandModal(${index})">
-                        <span class="cmd">${cmd.command}</span>
-                        <span class="desc">${cmd.description}</span>
-                        <span class="cmd-status ${statusClass}">${statusText}</span>
-                        <div class="cmd-actions">
-                            <button class="btn btn-sm ${cmd.status === 'active' ? 'btn-warning' : 'btn-success'}" 
-                                    onclick="event.stopPropagation(); toggleCommandStatus(${index})">
-                                ${cmd.status === 'active' ? '⏸️' : '▶️'}
-                            </button>
-                            <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); openCommandModal(${index})">
-                                ✏️
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); 
-                                    if(confirm('Удалить команду ${cmd.command}?')) { 
-                                        commands.splice(${index}, 1); 
-                                        saveData(); 
-                                        renderCommands(); 
-                                        showToast('🗑️ Команда ${cmd.command} удалена', 'info');
-                                        addLog('system', 'Удалена команда', '${cmd.command}', 'warning');
-                                    }">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            document.getElementById('commandsCount').textContent = commands.length;
-        }
-
-        function renderLogs() {
-            const container = document.getElementById('logContainer');
-            if (logs.length === 0) {
-                container.innerHTML = `<div class="log-empty">Логов пока нет.</div>`;
-                return;
-            }
-            let html = '';
-            logs.forEach(log => {
-                html += `
-                    <div class="log-item" onclick="showToast('${log.action} ${log.detail ? '— ' + log.detail : ''}', '${log.type}')">
-                        <span class="log-user">${log.user}</span>
-                        <span class="log-action">${log.action} ${log.detail ? '— ' + log.detail : ''}</span>
-                        <span class="log-badge ${log.type}">${log.type}</span>
-                        <span class="log-time">${log.time}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            container.scrollTop = 0;
-        }
-
-        function updateLogsCount() {
-            document.getElementById('logsCount').textContent = logs.length;
-        }
-
-        function fillFormFields() {
-            document.getElementById('botToken').value = botConfig.token || '';
-            document.getElementById('botDisplayName').value = botConfig.displayName || '';
-            document.getElementById('botUsernameInput').value = botConfig.username || '';
-            document.getElementById('botChannel').value = botConfig.channel || '';
-            if (botConfig.language) document.getElementById('botLanguage').value = botConfig.language;
-        }
-
-        // =============================================
-        // ===== TOAST =====
-        // =============================================
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', danger: '❌' };
-            toast.innerHTML = `
-                <span>${icons[type] || 'ℹ️'}</span>
-                <span>${message}</span>
-                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
-        }
-
-        // =============================================
-        // ===== ЗАПУСК =====
-        // =============================================
-
-        loadData();
-        loadPythonCode();
-        loadScripts();
-
-        setTimeout(() => { loadPyodideInstance(); }, 1000);
-
-        if (botConfig.token) {
-            setTimeout(() => {
-                getBotInfo(botConfig.token);
-                if (botConfig.channel) {
-                    setTimeout(() => { getSubscriberCount(botConfig.token, botConfig.channel); }, 1000);
-                }
-            }, 600);
-        }
-
-        let saveTimeout;
-
-        function autoSaveBot() {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => { saveBotSettings(); }, 800);
-        }
-
-        document.getElementById('botToken').addEventListener('input', autoSaveBot);
-        document.getElementById('botDisplayName').addEventListener('input', autoSaveBot);
-        document.getElementById('botUsernameInput').addEventListener('input', autoSaveBot);
-        document.getElementById('botChannel').addEventListener('input', autoSaveBot);
-        document.getElementById('botLanguage').addEventListener('change', autoSaveBot);
-
-        document.getElementById('pythonCode').addEventListener('input', function() {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => { savePythonCode(); }, 1500);
-        });
-
-        document.getElementById('newCommand').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('newCommandDesc').focus();
-            }
-        });
-
-        document.getElementById('newCommandDesc').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('newCommandResponse').focus();
-            }
-        });
-
-        document.getElementById('newCommandResponse').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addCommand();
-            }
-        });
-
-        document.getElementById('pythonCode').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                runPython();
-            }
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeCommandModal();
-        });
-
-        console.log('🚀 Signal Origin Админ-панель загружена!');
-        console.log(`📊 Команд: ${commands.length}`);
-        console.log(`📜 Логов: ${logs.length}`);
-        console.log(`🤖 Бот: ${botConfig.token ? 'настроен' : 'не настроен'}`);
-        console.log(`📂 Скриптов: ${savedScripts.length}`);
-    </script>
-
+    <!-- футер -->
+    <div class="footer">
+      <span><i class="fas fa-hashtag"></i> ДГТУ · все каналы</span>
+      <span><i class="fas fa-arrow-right"></i> обновлено 2026</span>
+    </div>
+  </main>
 </body>
 </html>
