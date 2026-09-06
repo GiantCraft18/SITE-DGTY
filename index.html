@@ -354,6 +354,93 @@
             flex: 1;
         }
 
+        /* ===== COMMANDS LIST ===== */
+        .command-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #0b0e14;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            border: 1px solid #1a2430;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .command-item:hover {
+            border-color: #2a3745;
+            background: #131a22;
+        }
+
+        .command-item .cmd {
+            font-weight: 600;
+            color: #4fc3f7;
+            min-width: 70px;
+        }
+
+        .command-item .desc {
+            color: #8899aa;
+            font-size: 13px;
+            flex: 1;
+            margin: 0 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .command-item .cmd-status {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 30px;
+            margin-right: 8px;
+        }
+
+        .cmd-status.active {
+            background: #1b3a1f;
+            color: #4caf50;
+        }
+        .cmd-status.inactive {
+            background: #3a1b1b;
+            color: #f44336;
+        }
+
+        .command-item .cmd-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        /* ===== SCRIPTS LIST ===== */
+        .script-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #0b0e14;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            border: 1px solid #1a2430;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .script-item:hover {
+            border-color: #2a3745;
+            background: #131a22;
+        }
+
+        .script-item .sname {
+            font-weight: 600;
+            color: #4fc3f7;
+        }
+
+        .script-item .sdesc {
+            color: #8899aa;
+            font-size: 13px;
+            flex: 1;
+            margin: 0 12px;
+        }
+
         /* ===== CODE EDITOR ===== */
         .code-editor {
             position: relative;
@@ -406,71 +493,80 @@
             border-color: #ffb300;
         }
 
-        /* ===== COMMANDS LIST ===== */
-        .command-item {
-            display: flex;
-            justify-content: space-between;
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
             align-items: center;
-            padding: 8px 12px;
-            background: #0b0e14;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            border: 1px solid #1a2430;
-            transition: 0.2s;
-            cursor: pointer;
+            animation: fadeIn 0.3s ease;
         }
 
-        .command-item:hover {
-            border-color: #2a3745;
-            background: #131a22;
-        }
-
-        .command-item .cmd {
-            font-weight: 600;
-            color: #4fc3f7;
-        }
-
-        .command-item .desc {
-            color: #8899aa;
-            font-size: 13px;
-            flex: 1;
-            margin: 0 12px;
-        }
-
-        .command-item .cmd-actions {
+        .modal-overlay.active {
             display: flex;
-            gap: 6px;
         }
 
-        /* ===== SCRIPTS LIST ===== */
-        .script-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #0b0e14;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            border: 1px solid #1a2430;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .script-item:hover {
-            border-color: #2a3745;
+        .modal {
             background: #131a22;
+            border: 1px solid #2a3745;
+            border-radius: 28px;
+            padding: 32px 36px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
         }
 
-        .script-item .sname {
-            font-weight: 600;
-            color: #4fc3f7;
+        .modal h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
         }
 
-        .script-item .sdesc {
+        .modal p {
             color: #8899aa;
-            font-size: 13px;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal .modal-actions .btn {
             flex: 1;
-            margin: 0 12px;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         /* ===== LOGS ===== */
@@ -670,10 +766,14 @@
             .command-item .desc {
                 margin: 0;
                 width: 100%;
+                white-space: normal;
             }
             .toast {
                 min-width: unset;
                 width: calc(100vw - 40px);
+            }
+            .modal {
+                padding: 24px 20px;
             }
         }
     </style>
@@ -682,6 +782,39 @@
 
     <!-- ===== TOAST CONTAINER ===== -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <h2 id="modalTitle">Редактирование команды</h2>
+            <div id="modalBody">
+                <div class="form-group">
+                    <label>Команда</label>
+                    <input type="text" id="editCommand" placeholder="/start" />
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <input type="text" id="editCommandDesc" placeholder="Описание команды" />
+                </div>
+                <div class="form-group">
+                    <label>Статус</label>
+                    <select id="editCommandStatus">
+                        <option value="active">Активна</option>
+                        <option value="inactive">Неактивна</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ответ бота (текст)</label>
+                    <textarea id="editCommandResponse" placeholder="Текст ответа бота на команду..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeCommandModal()">Отмена</button>
+                <button class="btn btn-danger" onclick="deleteCommandFromModal()">🗑️ Удалить</button>
+                <button class="btn btn-primary" onclick="saveCommandFromModal()">💾 Сохранить</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="dashboard">
@@ -774,6 +907,10 @@
                             <input type="text" id="newCommandDesc" placeholder="Запуск бота" />
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Ответ бота</label>
+                        <input type="text" id="newCommandResponse" placeholder="Текст ответа на команду..." />
+                    </div>
                     <button class="btn btn-success" onclick="addCommand()" style="width:100%; justify-content:center;">
                         ➕ Добавить команду
                     </button>
@@ -786,7 +923,7 @@
             <h3>🐍 Python-редактор <span class="badge" id="pythonStatus">⏳ загрузка...</span></h3>
 
             <div class="code-editor">
-                <textarea id="pythonCode" placeholder="# Пиши Python-код здесь&#10;print('Hello, Signal Origin!')&#10;&#10;# Используй библиотеки:&#10;# import math, random, json, datetime"></textarea>
+                <textarea id="pythonCode" placeholder="# Пиши Python-код здесь&#10;print('Hello, Signal Origin!')"></textarea>
             </div>
 
             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
@@ -841,27 +978,169 @@
 
     <script>
         // =============================================
-        // ===== PYTHON (Pyodide) — РАБОЧАЯ ВЕРСИЯ =====
+        // ===== КОМАНДЫ — ПОЛНОСТЬЮ НАСТРАИВАЕМЫЕ =====
+        // =============================================
+
+        let editingCommandIndex = null;
+
+        function addCommand() {
+            const cmdInput = document.getElementById('newCommand');
+            const descInput = document.getElementById('newCommandDesc');
+            const respInput = document.getElementById('newCommandResponse');
+
+            const cmd = cmdInput.value.trim();
+            const desc = descInput.value.trim();
+            const response = respInput.value.trim();
+
+            if (!cmd) {
+                showToast('⚠️ Введите команду', 'warning');
+                cmdInput.focus();
+                return;
+            }
+
+            if (!cmd.startsWith('/')) {
+                showToast('⚠️ Команда должна начинаться с /', 'warning');
+                cmdInput.focus();
+                return;
+            }
+
+            if (commands.some(c => c.command === cmd)) {
+                showToast('⚠️ Команда уже существует', 'warning');
+                return;
+            }
+
+            commands.push({
+                command: cmd,
+                description: desc || 'Без описания',
+                response: response || '',
+                status: 'active'
+            });
+
+            cmdInput.value = '';
+            descInput.value = '';
+            respInput.value = '';
+
+            saveData();
+            renderCommands();
+            showToast(`✅ Команда ${cmd} добавлена`, 'success');
+            addLog('system', 'Добавлена команда', cmd, 'success');
+        }
+
+        function openCommandModal(index) {
+            editingCommandIndex = index;
+            const cmd = commands[index];
+
+            document.getElementById('modalTitle').textContent = '✏️ Редактирование команды';
+            document.getElementById('editCommand').value = cmd.command;
+            document.getElementById('editCommandDesc').value = cmd.description || '';
+            document.getElementById('editCommandStatus').value = cmd.status || 'active';
+            document.getElementById('editCommandResponse').value = cmd.response || '';
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeCommandModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            editingCommandIndex = null;
+        }
+
+        function saveCommandFromModal() {
+            if (editingCommandIndex === null) return;
+
+            const cmd = document.getElementById('editCommand').value.trim();
+            const desc = document.getElementById('editCommandDesc').value.trim();
+            const status = document.getElementById('editCommandStatus').value;
+            const response = document.getElementById('editCommandResponse').value.trim();
+
+            if (!cmd) {
+                showToast('⚠️ Команда не может быть пустой', 'warning');
+                return;
+            }
+
+            if (!cmd.startsWith('/')) {
+                showToast('⚠️ Команда должна начинаться с /', 'warning');
+                return;
+            }
+
+            // Проверяем, что команда не занята другой
+            const oldCmd = commands[editingCommandIndex].command;
+            if (cmd !== oldCmd && commands.some(c => c.command === cmd)) {
+                showToast('⚠️ Команда уже существует', 'warning');
+                return;
+            }
+
+            commands[editingCommandIndex] = {
+                command: cmd,
+                description: desc || 'Без описания',
+                status: status,
+                response: response || ''
+            };
+
+            saveData();
+            renderCommands();
+            closeCommandModal();
+            showToast(`✅ Команда ${cmd} обновлена`, 'success');
+            addLog('system', 'Обновлена команда', cmd, 'success');
+        }
+
+        function deleteCommandFromModal() {
+            if (editingCommandIndex === null) return;
+            const cmd = commands[editingCommandIndex].command;
+
+            if (confirm(`Удалить команду ${cmd}?`)) {
+                commands.splice(editingCommandIndex, 1);
+                saveData();
+                renderCommands();
+                closeCommandModal();
+                showToast(`🗑️ Команда ${cmd} удалена`, 'info');
+                addLog('system', 'Удалена команда', cmd, 'warning');
+            }
+        }
+
+        function toggleCommandStatus(index) {
+            const cmd = commands[index];
+            cmd.status = cmd.status === 'active' ? 'inactive' : 'active';
+            saveData();
+            renderCommands();
+            const statusText = cmd.status === 'active' ? 'активирована' : 'деактивирована';
+            showToast(`🔄 Команда ${cmd.command} ${statusText}`, 'info');
+            addLog('system', `Команда ${statusText}`, cmd.command, 'info');
+        }
+
+        // =============================================
+        // ===== PYTHON (Pyodide) =====
         // =============================================
 
         let pyodideInstance = null;
         let pyodideLoading = false;
         let pyodideLoaded = false;
 
-        // Загрузка Pyodide
-        async function loadPyodideInstance() {
-            if (pyodideLoaded && pyodideInstance) {
-                return pyodideInstance;
-            }
+        function cleanCode(code) {
+            let lines = code.split('\n');
+            while (lines.length > 0 && lines[0].trim() === '') lines.shift();
+            while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
 
+            let minIndent = Infinity;
+            for (let line of lines) {
+                if (line.trim() === '') continue;
+                let indent = line.match(/^(\s*)/)[0].length;
+                if (indent < minIndent) minIndent = indent;
+            }
+            if (minIndent > 0 && minIndent < Infinity) {
+                lines = lines.map(line => line.trim() === '' ? '' : line.slice(minIndent));
+            }
+            while (lines.length > 0 && lines[0].trim() === '') lines.shift();
+            while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+            return lines.join('\n');
+        }
+
+        async function loadPyodideInstance() {
+            if (pyodideLoaded && pyodideInstance) return pyodideInstance;
             if (pyodideLoading) {
-                // Ждём пока загрузится
                 return new Promise((resolve) => {
                     const check = setInterval(() => {
-                        if (pyodideLoaded) {
-                            clearInterval(check);
-                            resolve(pyodideInstance);
-                        }
+                        if (pyodideLoaded) { clearInterval(check);
+                            resolve(pyodideInstance); }
                     }, 200);
                 });
             }
@@ -871,9 +1150,6 @@
             document.getElementById('pythonStatus').style.color = '#ffb300';
 
             try {
-                showToast('🔄 Загрузка Python (Pyodide)...', 'info');
-
-                // Загружаем скрипт Pyodide
                 await new Promise((resolve, reject) => {
                     const script = document.createElement('script');
                     script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
@@ -882,62 +1158,47 @@
                     document.head.appendChild(script);
                 });
 
-                // Инициализируем Pyodide
+                let attempts = 0;
+                while (typeof loadPyodide === 'undefined' && attempts < 50) {
+                    await new Promise(r => setTimeout(r, 100));
+                    attempts++;
+                }
+                if (typeof loadPyodide === 'undefined') throw new Error('loadPyodide не загрузился');
+
                 pyodideInstance = await loadPyodide({
                     indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'
                 });
+                if (!pyodideInstance) throw new Error('Pyodide не инициализировался');
 
-                // Проверяем, что Pyodide загружен
-                if (typeof pyodideInstance === 'undefined' || !pyodideInstance) {
-                    throw new Error('Pyodide не загрузился');
-                }
-
-                // Загружаем полезные библиотеки
-                try {
-                    await pyodideInstance.loadPackage('micropip');
-                    await pyodideInstance.loadPackage('numpy');
-                    await pyodideInstance.loadPackage('pandas');
-                } catch (e) {
-                    console.warn('Не все библиотеки загружены:', e);
-                }
+                try { await pyodideInstance.loadPackage('micropip'); } catch (e) {}
+                try { await pyodideInstance.loadPackage('numpy'); } catch (e) {}
+                try { await pyodideInstance.loadPackage('pandas'); } catch (e) {}
 
                 pyodideLoaded = true;
                 pyodideLoading = false;
-
                 document.getElementById('pythonStatus').textContent = '✅ Python готов';
                 document.getElementById('pythonStatus').style.color = '#4caf50';
 
                 showToast('✅ Python (Pyodide) загружен!', 'success');
                 addLog('system', 'Python загружен', 'Pyodide v0.26.4', 'success');
 
-                // Показываем пример кода, если поле пустое
                 const codeArea = document.getElementById('pythonCode');
-                if (!codeArea.value.trim()) {
+                if (!codeArea.value.trim() || codeArea.value.trim() ===
+                    '# Пиши Python-код здесь\nprint(\'Hello, Signal Origin!\')') {
                     codeArea.value =
-                        `# ===== Signal Origin Python =====
-        import random
+                        `import random
         import datetime
 
         print("🚀 Python работает!")
-
-        # Генерация случайных данных
         subscribers = random.randint(800, 1000)
         print(f"📊 Подписчиков: {subscribers}")
-
-        # Работа с датой
         now = datetime.datetime.now()
         print(f"🕒 Время: {now.strftime('%H:%M:%S')}")
-
-        # Математика
         numbers = [random.randint(1, 100) for _ in range(5)]
         print(f"📊 Случайные числа: {numbers}")
-        print(f"📊 Сумма: {sum(numbers)}")
-
-        print("✅ Код выполнен успешно!")`;
+        print(f"📊 Сумма: {sum(numbers)}")`;
                 }
-
                 return pyodideInstance;
-
             } catch (e) {
                 pyodideLoading = false;
                 document.getElementById('pythonStatus').textContent = '❌ Ошибка загрузки';
@@ -949,7 +1210,6 @@
             }
         }
 
-        // Запуск Python-кода
         async function runPython() {
             const code = document.getElementById('pythonCode').value;
             const output = document.getElementById('pythonOutput');
@@ -959,11 +1219,11 @@
                 return;
             }
 
+            const cleanedCode = cleanCode(code);
             output.textContent = '⏳ Загрузка Python...';
             output.className = 'code-output loading';
 
             const py = await loadPyodideInstance();
-
             if (!py) {
                 output.textContent = '❌ Ошибка: Python не загружен. Обнови страницу и попробуй снова.';
                 output.className = 'code-output error';
@@ -974,29 +1234,18 @@
             output.className = 'code-output loading';
 
             try {
-                // Перехватываем вывод
                 py.runPython(`
                     import sys
                     from io import StringIO
                     sys.stdout = StringIO()
                 `);
-
-                // Выполняем код
-                await py.runPythonAsync(code);
-
-                // Получаем вывод
+                await py.runPythonAsync(cleanedCode);
                 const stdout = py.runPython('sys.stdout.getvalue()');
 
-                if (stdout.trim()) {
-                    output.textContent = stdout;
-                } else {
-                    output.textContent = '✅ Код выполнен успешно (нет вывода)';
-                }
+                output.textContent = stdout.trim() || '✅ Код выполнен успешно (нет вывода)';
                 output.className = 'code-output success';
-
-                addLog('user', 'Выполнен Python-код', `длина: ${code.length} симв.`, 'success');
+                addLog('user', 'Выполнен Python-код', `длина: ${cleanedCode.length} симв.`, 'success');
                 showToast('✅ Код выполнен', 'success');
-
             } catch (e) {
                 output.textContent = `❌ Ошибка:\n${e.message}`;
                 output.className = 'code-output error';
@@ -1005,7 +1254,6 @@
             }
         }
 
-        // Сохранение кода в localStorage
         function savePythonCode() {
             const code = document.getElementById('pythonCode').value;
             if (code.trim()) {
@@ -1016,45 +1264,17 @@
             }
         }
 
-        // Загрузка сохранённого кода
         function loadPythonCode() {
             const saved = localStorage.getItem('signalOriginPythonCode');
-            if (saved) {
-                document.getElementById('pythonCode').value = saved;
-            } else {
-                // Пример кода по умолчанию (загрузится после инициализации Pyodide)
-                document.getElementById('pythonCode').value =
-                    `# ===== Signal Origin Python =====
-        import random
-        import datetime
-
-        print("🚀 Python работает!")
-
-        # Генерация случайных данных
-        subscribers = random.randint(800, 1000)
-        print(f"📊 Подписчиков: {subscribers}")
-
-        # Работа с датой
-        now = datetime.datetime.now()
-        print(f"🕒 Время: {now.strftime('%H:%M:%S')}")
-
-        # Математика
-        numbers = [random.randint(1, 100) for _ in range(5)]
-        print(f"📊 Случайные числа: {numbers}")
-        print(f"📊 Сумма: {sum(numbers)}")
-
-        print("✅ Код выполнен успешно!")`;
-            }
+            if (saved) document.getElementById('pythonCode').value = saved;
         }
 
-        // Экспорт кода в .py файл
         function exportPythonCode() {
             const code = document.getElementById('pythonCode').value;
             if (!code.trim()) {
                 showToast('⚠️ Код пуст', 'warning');
                 return;
             }
-
             const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1066,7 +1286,6 @@
             addLog('system', 'Экспортирован Python-скрипт', '', 'info');
         }
 
-        // Очистка вывода
         function clearPythonOutput() {
             document.getElementById('pythonOutput').textContent = '▶️ Вывод очищен';
             document.getElementById('pythonOutput').className = 'code-output';
@@ -1081,11 +1300,7 @@
         function loadScripts() {
             const saved = localStorage.getItem('signalOriginScripts');
             if (saved) {
-                try {
-                    savedScripts = JSON.parse(saved);
-                } catch (e) {
-                    savedScripts = [];
-                }
+                try { savedScripts = JSON.parse(saved); } catch (e) { savedScripts = []; }
             }
             renderScripts();
         }
@@ -1098,19 +1313,11 @@
         function saveScript() {
             const name = document.getElementById('scriptName').value.trim() || `Скрипт_${savedScripts.length + 1}`;
             const code = document.getElementById('pythonCode').value.trim();
-
             if (!code) {
                 showToast('⚠️ Напишите код перед сохранением', 'warning');
                 return;
             }
-
-            savedScripts.push({
-                id: Date.now(),
-                name: name,
-                code: code,
-                created: new Date().toLocaleString()
-            });
-
+            savedScripts.push({ id: Date.now(), name: name, code: code, created: new Date().toLocaleString() });
             document.getElementById('scriptName').value = '';
             saveScriptsData();
             showToast(`✅ Скрипт "${name}" сохранён`, 'success');
@@ -1139,12 +1346,10 @@
         function renderScripts() {
             const container = document.getElementById('scriptsList');
             document.getElementById('scriptsCount').textContent = savedScripts.length;
-
             if (savedScripts.length === 0) {
                 container.innerHTML = `<div class="log-empty">Нет сохранённых скриптов</div>`;
                 return;
             }
-
             let html = '';
             savedScripts.forEach(s => {
                 html += `
@@ -1157,7 +1362,6 @@
                     </div>
                 `;
             });
-
             container.innerHTML = html;
         }
 
@@ -1165,14 +1369,7 @@
         // ===== ДАННЫЕ =====
         // =============================================
 
-        let botConfig = {
-            token: '',
-            displayName: '',
-            username: '',
-            channel: '',
-            language: 'ru'
-        };
-
+        let botConfig = { token: '', displayName: '', username: '', channel: '', language: 'ru' };
         let commands = [];
         let logs = [];
         let botInfo = null;
@@ -1186,20 +1383,13 @@
                     commands = data.commands || [];
                     logs = data.logs || [];
                     botInfo = data.botInfo || null;
-                } catch (e) {
-                    console.error('Ошибка загрузки данных:', e);
-                }
+                } catch (e) { console.error('Ошибка загрузки данных:', e); }
             }
             renderAll();
         }
 
         function saveData() {
-            const data = {
-                botConfig: botConfig,
-                commands: commands,
-                logs: logs,
-                botInfo: botInfo
-            };
+            const data = { botConfig, commands, logs, botInfo };
             localStorage.setItem('signalOriginBotData', JSON.stringify(data));
         }
 
@@ -1223,10 +1413,7 @@
             saveData();
             renderAll();
             showToast('✅ Настройки сохранены!', 'success');
-
-            if (token) {
-                getBotInfo(token);
-            }
+            if (token) getBotInfo(token);
         }
 
         function connectBot() {
@@ -1241,30 +1428,23 @@
 
         async function getBotInfo(token) {
             const connectBtn = document.getElementById('connectBtn');
-
             connectBtn.disabled = true;
             connectBtn.innerHTML = '<span class="spinner"></span> Подключение...';
 
             try {
                 const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
                 const data = await response.json();
-
                 if (data.ok) {
                     botInfo = data.result;
                     botConfig.displayName = data.result.first_name || botConfig.displayName;
                     botConfig.username = `@${data.result.username}` || botConfig.username;
-
                     document.getElementById('botDisplayName').value = botConfig.displayName;
                     document.getElementById('botUsernameInput').value = botConfig.username;
-
                     saveData();
                     renderAll();
                     showToast(`✅ Бот ${data.result.first_name} подключён!`, 'success');
                     addLog('system', 'Бот подключён', `@${data.result.username}`, 'success');
-
-                    if (botConfig.channel) {
-                        getSubscriberCount(token, botConfig.channel);
-                    }
+                    if (botConfig.channel) getSubscriberCount(token, botConfig.channel);
                 } else {
                     showToast(`❌ Ошибка: ${data.description}`, 'danger');
                     addLog('system', 'Ошибка подключения', data.description, 'danger');
@@ -1272,30 +1452,22 @@
             } catch (e) {
                 showToast('❌ Не удалось подключиться к Telegram API', 'danger');
                 addLog('system', 'Ошибка сети', e.message, 'danger');
-                console.error(e);
             }
-
             connectBtn.disabled = false;
             connectBtn.innerHTML = '🔗 Подключить бота';
         }
 
         async function getSubscriberCount(token, channel) {
             try {
-                const url = `https://api.telegram.org/bot${token}/getChatMemberCount?chat_id=${channel}`;
-                const response = await fetch(url);
+                const response = await fetch(`https://api.telegram.org/bot${token}/getChatMemberCount?chat_id=${channel}`);
                 const data = await response.json();
-
                 if (data.ok) {
                     document.getElementById('botSubCount').textContent = `👥 подписчики: ${data.result}`;
-                    return data.result;
                 } else {
                     document.getElementById('botSubCount').textContent = `👥 подписчики: ошибка`;
-                    return null;
                 }
             } catch (e) {
-                console.error('Ошибка получения подписчиков:', e);
                 document.getElementById('botSubCount').textContent = `👥 подписчики: ошибка`;
-                return null;
             }
         }
 
@@ -1306,15 +1478,12 @@
                 document.getElementById('botToken').focus();
                 return;
             }
-
             const testBtn = document.getElementById('testBtn');
             testBtn.disabled = true;
             testBtn.innerHTML = '<span class="spinner"></span>';
-
             try {
                 const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
                 const data = await response.json();
-
                 if (data.ok) {
                     showToast(`✅ Бот работает! Имя: ${data.result.first_name}`, 'success');
                     addLog('system', 'Тест бота', 'успешно', 'success');
@@ -1326,7 +1495,6 @@
                 showToast('❌ Бот не отвечает. Проверьте токен.', 'danger');
                 addLog('system', 'Тест бота', 'ошибка сети', 'danger');
             }
-
             testBtn.disabled = false;
             testBtn.innerHTML = '📡 Тест';
         }
@@ -1335,60 +1503,10 @@
             const token = document.getElementById('botToken').value.trim();
             if (token) {
                 getBotInfo(token);
-                if (botConfig.channel) {
-                    getSubscriberCount(token, botConfig.channel);
-                }
+                if (botConfig.channel) getSubscriberCount(token, botConfig.channel);
                 showToast('🔄 Данные обновлены', 'info');
             } else {
                 showToast('⚠️ Токен не задан', 'warning');
-            }
-        }
-
-        // =============================================
-        // ===== КОМАНДЫ =====
-        // =============================================
-
-        function addCommand() {
-            const cmdInput = document.getElementById('newCommand');
-            const descInput = document.getElementById('newCommandDesc');
-            const cmd = cmdInput.value.trim();
-            const desc = descInput.value.trim();
-
-            if (!cmd) {
-                showToast('⚠️ Введите команду', 'warning');
-                cmdInput.focus();
-                return;
-            }
-
-            if (!cmd.startsWith('/')) {
-                showToast('⚠️ Команда должна начинаться с /', 'warning');
-                cmdInput.focus();
-                return;
-            }
-
-            if (commands.some(c => c.command === cmd)) {
-                showToast('⚠️ Команда уже существует', 'warning');
-                return;
-            }
-
-            commands.push({ command: cmd, description: desc || 'Без описания' });
-            cmdInput.value = '';
-            descInput.value = '';
-
-            saveData();
-            renderCommands();
-            showToast(`✅ Команда ${cmd} добавлена`, 'success');
-            addLog('system', 'Добавлена команда', cmd, 'success');
-        }
-
-        function removeCommand(index) {
-            const cmd = commands[index].command;
-            if (confirm(`Удалить команду ${cmd}?`)) {
-                commands.splice(index, 1);
-                saveData();
-                renderCommands();
-                showToast(`🗑️ Команда ${cmd} удалена`, 'info');
-                addLog('system', 'Удалена команда', cmd, 'warning');
             }
         }
 
@@ -1400,29 +1518,21 @@
             const time = new Date();
             logs.unshift({
                 id: Date.now() + Math.random(),
-                user: user,
-                action: action,
+                user,
+                action,
                 detail: detail || '',
-                type: type,
+                type,
                 time: time.toLocaleTimeString(),
-                date: time.toLocaleDateString(),
-                timestamp: time.toISOString()
+                date: time.toLocaleDateString()
             });
-
-            if (logs.length > 200) {
-                logs = logs.slice(0, 200);
-            }
-
+            if (logs.length > 200) logs = logs.slice(0, 200);
             saveData();
             renderLogs();
             updateLogsCount();
         }
 
         function clearLogs() {
-            if (logs.length === 0) {
-                showToast('📭 Логи уже пусты', 'info');
-                return;
-            }
+            if (logs.length === 0) { showToast('📭 Логи уже пусты', 'info'); return; }
             if (confirm('Очистить все логи?')) {
                 logs = [];
                 saveData();
@@ -1458,10 +1568,7 @@
         }
 
         function exportLogs() {
-            if (logs.length === 0) {
-                showToast('📭 Нет логов для экспорта', 'warning');
-                return;
-            }
+            if (logs.length === 0) { showToast('📭 Нет логов для экспорта', 'warning'); return; }
             const data = JSON.stringify({ logs, commands, botConfig, savedScripts }, null, 2);
             const blob = new Blob([data], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -1474,17 +1581,13 @@
         }
 
         function addTestLog() {
-            const users = ['Алексей', 'Мария', 'Дмитрий', 'Екатерина', 'Андрей', 'Олег', 'Наталья'];
-            const actions = ['Запустил бота', 'Использовал команду', 'Отправил сообщение', 'Получил уведомление',
-                'Настроил параметры', 'Запросил статистику'
-            ];
-            const types = ['success', 'info', 'warning', 'info', 'success', 'info'];
-
-            const user = users[Math.floor(Math.random() * users.length)];
-            const action = actions[Math.floor(Math.random() * actions.length)];
-            const type = types[Math.floor(Math.random() * types.length)];
-
-            addLog(user, action, `Действие в боте`, type);
+            const users = ['Алексей', 'Мария', 'Дмитрий', 'Екатерина', 'Андрей'];
+            const actions = ['Запустил бота', 'Использовал команду', 'Отправил сообщение', 'Настроил параметры'];
+            const types = ['success', 'info', 'warning', 'info'];
+            addLog(users[Math.floor(Math.random() * users.length)],
+                actions[Math.floor(Math.random() * actions.length)],
+                'Действие в боте',
+                types[Math.floor(Math.random() * types.length)]);
         }
 
         // =============================================
@@ -1531,12 +1634,31 @@
 
             let html = '';
             commands.forEach((cmd, index) => {
+                const statusClass = cmd.status === 'active' ? 'active' : 'inactive';
+                const statusText = cmd.status === 'active' ? '🟢 Активна' : '🔴 Неактивна';
                 html += `
-                    <div class="command-item" onclick="showToast('📋 ${cmd.command} — ${cmd.description}', 'info')">
+                    <div class="command-item" onclick="openCommandModal(${index})">
                         <span class="cmd">${cmd.command}</span>
                         <span class="desc">${cmd.description}</span>
+                        <span class="cmd-status ${statusClass}">${statusText}</span>
                         <div class="cmd-actions">
-                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); removeCommand(${index})">✕</button>
+                            <button class="btn btn-sm ${cmd.status === 'active' ? 'btn-warning' : 'btn-success'}" 
+                                    onclick="event.stopPropagation(); toggleCommandStatus(${index})">
+                                ${cmd.status === 'active' ? '⏸️' : '▶️'}
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); openCommandModal(${index})">
+                                ✏️
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); 
+                                    if(confirm('Удалить команду ${cmd.command}?')) { 
+                                        commands.splice(${index}, 1); 
+                                        saveData(); 
+                                        renderCommands(); 
+                                        showToast('🗑️ Команда ${cmd.command} удалена', 'info');
+                                        addLog('system', 'Удалена команда', '${cmd.command}', 'warning');
+                                    }">
+                                ✕
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1548,25 +1670,21 @@
 
         function renderLogs() {
             const container = document.getElementById('logContainer');
-
             if (logs.length === 0) {
-                container.innerHTML = `<div class="log-empty">Логов пока нет. Действия пользователей будут отображаться здесь.</div>`;
+                container.innerHTML = `<div class="log-empty">Логов пока нет.</div>`;
                 return;
             }
-
             let html = '';
             logs.forEach(log => {
-                const badgeClass = log.type || 'info';
                 html += `
                     <div class="log-item" onclick="showToast('${log.action} ${log.detail ? '— ' + log.detail : ''}', '${log.type}')">
                         <span class="log-user">${log.user}</span>
                         <span class="log-action">${log.action} ${log.detail ? '— ' + log.detail : ''}</span>
-                        <span class="log-badge ${badgeClass}">${log.type}</span>
+                        <span class="log-badge ${log.type}">${log.type}</span>
                         <span class="log-time">${log.time}</span>
                     </div>
                 `;
             });
-
             container.innerHTML = html;
             container.scrollTop = 0;
         }
@@ -1580,9 +1698,7 @@
             document.getElementById('botDisplayName').value = botConfig.displayName || '';
             document.getElementById('botUsernameInput').value = botConfig.username || '';
             document.getElementById('botChannel').value = botConfig.channel || '';
-            if (botConfig.language) {
-                document.getElementById('botLanguage').value = botConfig.language;
-            }
+            if (botConfig.language) document.getElementById('botLanguage').value = botConfig.language;
         }
 
         // =============================================
@@ -1593,21 +1709,14 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            const icons = {
-                success: '✅',
-                info: 'ℹ️',
-                warning: '⚠️',
-                danger: '❌'
-            };
+            const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', danger: '❌' };
             toast.innerHTML = `
                 <span>${icons[type] || 'ℹ️'}</span>
                 <span>${message}</span>
                 <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
             `;
             container.appendChild(toast);
-            setTimeout(() => {
-                if (toast.parentElement) toast.remove();
-            }, 4000);
+            setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
         }
 
         // =============================================
@@ -1618,31 +1727,22 @@
         loadPythonCode();
         loadScripts();
 
-        // Автоматически загружаем Pyodide при старте
-        setTimeout(() => {
-            loadPyodideInstance();
-        }, 1000);
+        setTimeout(() => { loadPyodideInstance(); }, 1000);
 
-        // Если есть токен — проверяем бота
         if (botConfig.token) {
             setTimeout(() => {
                 getBotInfo(botConfig.token);
                 if (botConfig.channel) {
-                    setTimeout(() => {
-                        getSubscriberCount(botConfig.token, botConfig.channel);
-                    }, 1000);
+                    setTimeout(() => { getSubscriberCount(botConfig.token, botConfig.channel); }, 1000);
                 }
             }, 600);
         }
 
-        // Авто-сохранение
         let saveTimeout;
 
         function autoSaveBot() {
             clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                saveBotSettings();
-            }, 800);
+            saveTimeout = setTimeout(() => { saveBotSettings(); }, 800);
         }
 
         document.getElementById('botToken').addEventListener('input', autoSaveBot);
@@ -1651,15 +1751,11 @@
         document.getElementById('botChannel').addEventListener('input', autoSaveBot);
         document.getElementById('botLanguage').addEventListener('change', autoSaveBot);
 
-        // Авто-сохранение Python-кода
         document.getElementById('pythonCode').addEventListener('input', function() {
             clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                savePythonCode();
-            }, 1500);
+            saveTimeout = setTimeout(() => { savePythonCode(); }, 1500);
         });
 
-        // Enter для добавления команды
         document.getElementById('newCommand').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -1670,11 +1766,17 @@
         document.getElementById('newCommandDesc').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
+                document.getElementById('newCommandResponse').focus();
+            }
+        });
+
+        document.getElementById('newCommandResponse').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
                 addCommand();
             }
         });
 
-        // Ctrl+Enter для выполнения Python
         document.getElementById('pythonCode').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault();
@@ -1682,12 +1784,15 @@
             }
         });
 
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCommandModal();
+        });
+
         console.log('🚀 Signal Origin Админ-панель загружена!');
         console.log(`📊 Команд: ${commands.length}`);
         console.log(`📜 Логов: ${logs.length}`);
         console.log(`🤖 Бот: ${botConfig.token ? 'настроен' : 'не настроен'}`);
         console.log(`📂 Скриптов: ${savedScripts.length}`);
-        console.log('🐍 Для выполнения Python нажми Ctrl+Enter или кнопку "Выполнить"');
     </script>
 
 </body>
