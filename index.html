@@ -778,25 +778,25 @@
         <svg class="icon" style="width:1.2rem;height:1.2rem;"><use href="#icon-close"></use></svg>
       </button>
     </div>
-    <div class="search-results-counter" id="resultsCounter"></div>
+    <div class="search-results-counter" id="resultsCounter" role="status" aria-live="polite"></div>
 
     <!-- ===== БЫСТРЫЕ ФИЛЬТРЫ (ТАБЫ) ===== -->
     <div class="tabs-container" role="tablist">
-      <button class="tab-btn active" data-filter="all" role="tab" aria-selected="true">
-        <svg><use href="#icon-all"></use></svg> Все
-        <span class="badge-count">10</span>
+      <button class="tab-btn active" data-filter="all" role="tab" aria-selected="true" aria-controls="sec-tg sec-vk sec-other">
+        <svg class="icon"><use href="#icon-all"></use></svg> Все
+        <span class="badge-count" data-count-for="all">10</span>
       </button>
-      <button class="tab-btn" data-filter="primary" role="tab" aria-selected="false">
-        <svg><use href="#icon-paper-plane"></use></svg> Telegram & MAX
-        <span class="badge-count">5</span>
+      <button class="tab-btn" data-filter="primary" role="tab" aria-selected="false" aria-controls="sec-tg">
+        <svg class="icon"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
+        <span class="badge-count" data-count-for="primary">5</span>
       </button>
-      <button class="tab-btn" data-filter="vk" role="tab" aria-selected="false">
-        <svg><use href="#icon-vk"></use></svg> ВКонтакте
-        <span class="badge-count">2</span>
+      <button class="tab-btn" data-filter="vk" role="tab" aria-selected="false" aria-controls="sec-vk">
+        <svg class="icon"><use href="#icon-vk"></use></svg> ВКонтакте
+        <span class="badge-count" data-count-for="vk">2</span>
       </button>
-      <button class="tab-btn" data-filter="other" role="tab" aria-selected="false">
-        <svg><use href="#icon-share"></use></svg> Другие
-        <span class="badge-count">3</span>
+      <button class="tab-btn" data-filter="other" role="tab" aria-selected="false" aria-controls="sec-other">
+        <svg class="icon"><use href="#icon-share"></use></svg> Другие
+        <span class="badge-count" data-count-for="other">3</span>
       </button>
     </div>
 
@@ -915,6 +915,30 @@
       let currentFilter = 'all';
       let currentSearchQuery = '';
 
+      // ===== ДИНАМИЧЕСКИЙ ПОДСЧЁТ КАРТОЧЕК В ТАБАХ =====
+      // Считаем реальное количество карточек по секциям, чтобы цифры
+      // в табах никогда не расходились с фактическим числом ссылок.
+      function updateTabCounts() {
+        const countsBySection = {};
+        let total = 0;
+
+        allSections.forEach(section => {
+          const sectionName = section.dataset.section;
+          const count = section.querySelectorAll('.link-card').length;
+          countsBySection[sectionName] = count;
+          total += count;
+        });
+
+        document.querySelectorAll('.badge-count').forEach(badge => {
+          const key = badge.dataset.countFor;
+          if (key === 'all') {
+            badge.textContent = total;
+          } else if (countsBySection.hasOwnProperty(key)) {
+            badge.textContent = countsBySection[key];
+          }
+        });
+      }
+
       // ===== ФИЛЬТРАЦИЯ ПО ТАБАМ =====
       function filterByTab(filter) {
         currentFilter = filter;
@@ -1016,7 +1040,7 @@
       });
 
       // ===== ИНИЦИАЛИЗАЦИЯ =====
-      // Показываем всё
+      updateTabCounts();
       filterByTab('all');
     })();
   </script>
