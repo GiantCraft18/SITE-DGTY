@@ -8,30 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
   <style>
-    /* ----- общие сбросы и фон ----- */
+    /* ----- общие сбросы ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-    }
-
-    /* ----- встроенные SVG-иконки ----- */
-    .icon {
-      width: 1em;
-      height: 1em;
-      display: inline-block;
-      vertical-align: -0.15em;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 1.6;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      flex-shrink: 0;
-    }
-
-    .icon .dot {
-      fill: currentColor;
-      stroke: none;
     }
 
     body {
@@ -46,7 +27,26 @@
       overflow-x: hidden;
     }
 
-    /* ----- анимированные фоновые фигуры ----- */
+    /* ----- встроенные SVG-иконки ----- */
+    .ico {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: -0.15em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .ico .dot {
+      fill: currentColor;
+      stroke: none;
+    }
+
+    /* ----- анимированный фон ----- */
     .bg-shapes {
       position: absolute;
       inset: 0;
@@ -96,17 +96,25 @@
       100% { transform: translate(30px, -40px) scale(1.1) rotate(10deg); }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
     /* ----- главная карточка ----- */
     .card {
       position: relative;
       z-index: 10;
-      max-width: 1100px;
+      max-width: 1200px;
       width: 100%;
       background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(16px) saturate(180%);
       -webkit-backdrop-filter: blur(16px) saturate(180%);
       border-radius: 56px;
-      padding: 2.8rem 2.8rem 3.2rem;
+      padding: 2rem 2rem 2.5rem;
       box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.06);
       animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -117,32 +125,304 @@
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* ----- шапка ----- */
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
+    /* ===== ШАПКА С ГАМБУРГЕРОМ ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
-    .header__icon {
-      font-size: 2.8rem;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      font-size: 2rem;
       color: #ffd966;
-      margin-bottom: 0.5rem;
-      display: inline-block;
       animation: pulseGlow 3s infinite;
+      display: inline-flex;
     }
 
     @keyframes pulseGlow {
-      0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
-      50% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-      100% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+      0% { filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.2)); }
+      50% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+      100% { filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.2)); }
+    }
+
+    .brand-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #ffffff 0%, #ffd966 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .menu-header .brand-text .ico {
+      -webkit-text-fill-color: #ffd966;
+      color: #ffd966;
+    }
+
+    .brand-sub {
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.3);
+      display: block;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ===== ГАМБУРГЕР ===== */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 100;
+      border-radius: 12px;
+      transition: background 0.3s;
+    }
+
+    .hamburger:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .hamburger:focus-visible {
+      outline: 2px solid #ffd966;
+      outline-offset: 2px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 28px;
+      height: 2.5px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -6px);
+    }
+
+    /* ===== МЕНЮ ===== */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -380px;
+      width: 380px;
+      max-width: 85vw;
+      height: 100vh;
+      background: linear-gradient(160deg, #0f1f30 0%, #162a3f 100%);
+      z-index: 99;
+      padding: 2rem 1.5rem;
+      overflow-y: auto;
+      transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .side-menu::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .side-menu::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .side-menu::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .menu-header .brand-text {
+      font-size: 1.1rem;
+    }
+
+    .menu-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: color 0.3s;
+      padding: 0.3rem;
+      display: inline-flex;
+      font-size: 1.3rem;
+    }
+
+    .menu-close:hover {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .menu-close:focus-visible {
+      outline: 2px solid #ffd966;
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    .menu-section {
+      margin-bottom: 2rem;
+    }
+
+    .menu-section-title {
+      color: rgba(255, 215, 0, 0.4);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      width: 100%;
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      text-align: left;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
+    }
+
+    .menu-item:focus-visible {
+      outline: 2px solid #ffd966;
+      outline-offset: -2px;
+    }
+
+    .menu-item .icon {
+      font-size: 1.1rem;
+      width: 1.6rem;
+      text-align: center;
+      flex-shrink: 0;
+      display: inline-flex;
+      justify-content: center;
+    }
+
+    .menu-item .arrow {
+      margin-left: auto;
+      color: rgba(255, 255, 255, 0.25);
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+      display: inline-flex;
+    }
+
+    .faculty-toggle[aria-expanded="true"] .arrow {
+      transform: rotate(180deg);
+      color: #ffd966;
+    }
+
+    .menu-item .badge-menu {
+      background: rgba(255, 215, 0, 0.1);
+      color: #ffd966;
+      font-size: 0.5rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 20px;
+      margin-left: auto;
+    }
+
+    /* ===== ФАКУЛЬТЕТЫ: аккордеон ===== */
+    .faculty-sub {
+      padding-left: 0.8rem;
+      margin-top: 0.2rem;
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+    }
+
+    .faculty-sub > div {
+      overflow: hidden;
+    }
+
+    .faculty-sub.open {
+      grid-template-rows: 1fr;
+      margin-bottom: 0.4rem;
+    }
+
+    .faculty-sub .menu-item {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.8rem;
+      color: rgba(255, 255, 255, 0.3);
+      cursor: default;
+    }
+
+    .faculty-sub .menu-item:hover {
+      color: rgba(255, 255, 255, 0.6);
+      background: none;
+    }
+
+    /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
     }
 
     .header h1 {
-      font-size: 2.6rem;
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -0.03em;
       color: #ffffff;
-      margin-bottom: 0.4rem;
       background: linear-gradient(135deg, #ffffff 0%, #ffd966 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -150,66 +430,60 @@
     }
 
     .header p {
-      color: rgba(255, 255, 255, 0.4);
-      font-weight: 400;
-      font-size: 1.05rem;
-      letter-spacing: 0.3px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
     }
 
     /* ===== ПОИСК ===== */
     .search-container {
       max-width: 500px;
-      margin: 1.8rem auto 0.5rem;
+      margin: 0 auto 0.4rem;
       position: relative;
     }
 
     .search-input {
       width: 100%;
-      padding: 0.8rem 1.2rem 0.8rem 3rem;
+      padding: 0.7rem 2.6rem 0.7rem 2.8rem;
       border-radius: 40px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
       color: #ffffff;
       font-family: 'Inter', sans-serif;
-      font-size: 1rem;
-      backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
+      font-size: 0.9rem;
       outline: none;
+      transition: all 0.3s ease;
     }
 
     .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.25);
+      color: rgba(255, 255, 255, 0.2);
     }
 
     .search-input:focus {
-      border-color: rgba(255, 215, 0, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
+      border-color: rgba(255, 215, 0, 0.2);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .search-icon {
       position: absolute;
-      left: 1.2rem;
+      left: 1rem;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.25);
-      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.2);
       pointer-events: none;
     }
 
     .search-clear {
       position: absolute;
-      right: 1.2rem;
+      right: 1rem;
       top: 50%;
       transform: translateY(-50%);
       color: rgba(255, 255, 255, 0.2);
       cursor: pointer;
-      font-size: 0.9rem;
       display: none;
-      transition: color 0.2s;
       background: none;
       border: none;
       padding: 0.2rem;
+      transition: color 0.2s;
     }
 
     .search-clear:hover {
@@ -217,455 +491,356 @@
     }
 
     .search-clear.visible {
-      display: block;
+      display: inline-flex;
     }
 
     .search-results-counter {
       color: rgba(255, 255, 255, 0.2);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-align: center;
-      margin-top: 0.5rem;
-      min-height: 1.2rem;
-      letter-spacing: 0.3px;
+      margin-bottom: 0.4rem;
+      min-height: 1rem;
     }
 
     .search-results-counter.highlight {
       color: rgba(255, 215, 0, 0.5);
     }
 
-    /* ===== БЫСТРЫЕ ФИЛЬТРЫ (ТАБЫ) ===== */
+    /* ===== ТАБЫ ===== */
     .tabs-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.6rem;
-      margin: 1.5rem 0 1rem;
+      gap: 0.4rem;
+      margin: 1rem 0 0.5rem;
     }
 
     .tab-btn {
-      padding: 0.5rem 1.2rem;
-      border-radius: 40px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(255, 255, 255, 0.03);
-      color: rgba(255, 255, 255, 0.4);
+      padding: 0.4rem 1rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.3);
       font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
     .tab-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: rgba(255, 255, 255, 0.7);
-      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .tab-btn:focus-visible {
+      outline: 2px solid #ffd966;
+      outline-offset: 2px;
     }
 
     .tab-btn.active {
-      background: rgba(255, 215, 0, 0.12);
+      background: rgba(255, 215, 0, 0.08);
       color: #ffd966;
-      border-color: rgba(255, 215, 0, 0.2);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
+      border-color: rgba(255, 215, 0, 0.15);
     }
 
-    .tab-btn svg {
-      width: 1em;
-      height: 1em;
-    }
-
-    .tab-btn .badge-count {
-      background: rgba(255, 255, 255, 0.06);
-      padding: 0.05rem 0.5rem;
-      border-radius: 20px;
-      font-size: 0.6rem;
-      color: rgba(255, 255, 255, 0.3);
-      margin-left: 0.2rem;
-    }
-
-    .tab-btn.active .badge-count {
-      background: rgba(255, 215, 0, 0.1);
-      color: rgba(255, 215, 0, 0.5);
-    }
-
-    /* ----- структура: категории ----- */
+    /* ===== СЕКЦИИ ===== */
     .section-title {
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.65rem;
       font-weight: 600;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin: 1.8rem 0 1rem 0.3rem;
+      margin: 1.5rem 0 0.8rem 0.3rem;
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      transition: opacity 0.3s ease;
-    }
-
-    .section-title i {
-      color: rgba(255, 215, 0, 0.3);
-      font-size: 0.9rem;
     }
 
     .section-title::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.03);
     }
 
-    .section-title.hidden {
-      opacity: 0;
-      margin: 0;
-      height: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    /* ----- сетка ссылок ----- */
-    .links-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-      gap: 1.2rem;
-      margin-top: 0.3rem;
-      transition: all 0.3s ease;
-    }
-
-    /* Скрытие всей секции */
     section.hidden-section {
       display: none;
     }
 
+    /* ===== СЕТКА КАРТОЧЕК ===== */
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.8rem;
+    }
+
     .link-card {
-      --i: 0;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 24px;
-      padding: 1.4rem 0.6rem 1.2rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 18px;
+      padding: 1rem 0.4rem 0.8rem;
       text-align: center;
       text-decoration: none;
       color: #f0f4ff;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(4px);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.4rem;
-      animation: linkPop 0.5s ease backwards;
-      animation-delay: calc(var(--i) * 0.02s);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
+      gap: 0.2rem;
     }
 
-    .link-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.4s;
+    .link-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 215, 0, 0.1);
     }
 
-    .link-card:hover::before {
-      opacity: 1;
+    .link-card:focus-visible {
+      outline: 2px solid #ffd966;
+      outline-offset: 2px;
     }
 
     .link-card.hidden {
       display: none;
     }
 
-    @keyframes linkPop {
-      0% { opacity: 0; transform: scale(0.92) translateY(18px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .link-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 215, 0, 0.2);
-      box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
-    }
-
-    .link-card:active {
-      transform: scale(0.97);
-    }
-
-    .link-card:focus-visible {
-      outline: 2px solid #ffd966;
-      outline-offset: 3px;
-      transform: translateY(-4px) scale(1.01);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .link-card i {
-      font-size: 2.2rem;
+    .link-card .icon {
+      font-size: 1.6rem;
       color: #ffd966;
-      transition: transform 0.3s, color 0.3s;
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.15));
-    }
-
-    .link-card:hover i {
-      transform: scale(1.15) rotate(-3deg);
-      color: #ffe285;
+      display: inline-flex;
     }
 
     .link-card__title {
       font-weight: 600;
-      font-size: 1.05rem;
-      letter-spacing: -0.01em;
+      font-size: 0.85rem;
       color: #ffffff;
     }
 
     .link-card__sub {
-      font-size: 0.7rem;
-      opacity: 0.4;
-      font-weight: 400;
-      letter-spacing: 0.2px;
-      margin-top: -0.1rem;
+      font-size: 0.6rem;
+      opacity: 0.3;
     }
 
     .badge {
-      display: inline-block;
-      background: rgba(255, 215, 0, 0.08);
-      padding: 0.1rem 0.7rem;
-      border-radius: 40px;
-      font-size: 0.55rem;
-      font-weight: 600;
+      background: rgba(255, 215, 0, 0.06);
+      padding: 0.05rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.5rem;
       color: #ffd966;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      border: 1px solid rgba(255, 215, 0, 0.08);
-      margin-top: 0.1rem;
+      border: 1px solid rgba(255, 215, 0, 0.05);
     }
 
-    /* цветовые метки категорий */
-    .category-tg { border-left: 4px solid #27a0e6; }
-    .category-vk { border-left: 4px solid #4c7bb7; }
-    .category-other { border-left: 4px solid #ffb347; }
-    .category-social { border-left: 4px solid #ff6b6b; }
-    .category-max { border-left: 4px solid #a855f7; }
-    .category-nav { border-left: 4px solid #22d3ee; }
+    .category-tg { border-left: 3px solid #27a0e6; }
+    .category-vk { border-left: 3px solid #4c7bb7; }
+    .category-max { border-left: 3px solid #a855f7; }
+    .category-nav { border-left: 3px solid #22d3ee; }
+    .category-social { border-left: 3px solid #ff6b6b; }
 
-    /* ===== ВИЗУАЛЬНАЯ ИЕРАРХИЯ: выделение главной секции ===== */
-    .section-primary .section-title {
-      color: rgba(255, 215, 0, 0.5);
+    /* ===== ВАЖНАЯ ИНФОРМАЦИЯ ===== */
+    .important-block {
+      background: rgba(255, 215, 0, 0.03);
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border: 1px solid rgba(255, 215, 0, 0.04);
     }
 
-    .section-primary .section-title i {
-      color: rgba(255, 215, 0, 0.5);
+    .important-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.6rem;
     }
 
-    .section-primary .link-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 215, 0, 0.06);
+    .important-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.8rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 10px;
     }
 
-    .section-primary .link-card:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 215, 0, 0.2);
+    .important-item .icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      display: inline-flex;
     }
 
-    /* ----- футер ----- */
+    .important-item .label {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.55rem;
+      display: block;
+    }
+
+    .important-item .value {
+      font-weight: 500;
+    }
+
+    /* ===== ФУТЕР ===== */
     .footer {
-      margin-top: 3rem;
+      margin-top: 2rem;
       display: flex;
       justify-content: center;
-      gap: 1.2rem;
+      gap: 1rem;
       flex-wrap: wrap;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      padding-top: 1.5rem;
     }
 
     .footer span {
-      color: rgba(255, 255, 255, 0.15);
-      font-size: 0.8rem;
-      display: flex;
+      color: rgba(255, 255, 255, 0.1);
+      font-size: 0.65rem;
+      display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-    }
-
-    .footer i {
-      font-size: 0.9rem;
-      color: rgba(255, 215, 0, 0.15);
-    }
-
-    /* уважение к пользователям с reduce motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
+      gap: 0.3rem;
     }
 
     /* ===== АДАПТИВ ===== */
-
-    @media (max-width: 992px) {
-      .card {
-        padding: 2.2rem 2rem 2.6rem;
-        border-radius: 44px;
-      }
-      .links-grid {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-        gap: 1rem;
-      }
-      .header h1 {
-        font-size: 2.2rem;
-      }
-    }
-
     @media (max-width: 768px) {
       .card {
-        padding: 1.8rem 1.2rem 2.2rem;
-        border-radius: 36px;
+        padding: 1.2rem 1rem 1.8rem;
+        border-radius: 32px;
       }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .top-bar {
+        margin-bottom: 0.8rem;
+      }
+
+      .brand-text {
+        font-size: 1.1rem;
+      }
+
+      .brand-icon {
+        font-size: 1.6rem;
+      }
+
       .header h1 {
-        font-size: 1.8rem;
+        font-size: 1.4rem;
       }
-      .header p {
-        font-size: 0.9rem;
-      }
-      .header__icon {
-        font-size: 2.2rem;
-      }
+
       .links-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.9rem;
+        gap: 0.6rem;
       }
-      .link-card {
-        padding: 1.2rem 0.3rem 1rem;
-        border-radius: 20px;
-      }
-      .link-card i {
-        font-size: 1.8rem;
-      }
-      .link-card__title {
-        font-size: 0.9rem;
-      }
-      .link-card__sub {
-        font-size: 0.6rem;
-      }
-      .badge {
-        font-size: 0.5rem;
-        padding: 0.05rem 0.6rem;
-      }
-      .section-title {
-        font-size: 0.65rem;
-        margin: 1.4rem 0 0.7rem 0.2rem;
-      }
-      .search-input {
-        font-size: 0.9rem;
-        padding: 0.7rem 1rem 0.7rem 2.8rem;
-      }
-      .tab-btn {
-        font-size: 0.7rem;
-        padding: 0.4rem 0.9rem;
-      }
-    }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 0.8rem;
-      }
-      .card {
-        padding: 1.4rem 0.9rem 1.8rem;
-        border-radius: 28px;
-      }
-      .header h1 {
-        font-size: 1.5rem;
-      }
-      .header p {
-        font-size: 0.8rem;
-      }
-      .header__icon {
-        font-size: 1.8rem;
-      }
-      .links-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.7rem;
-      }
       .link-card {
-        padding: 1rem 0.2rem 0.8rem;
-        border-radius: 16px;
-        border-left-width: 3px;
+        padding: 0.8rem 0.2rem 0.6rem;
+        border-radius: 14px;
       }
-      .link-card i {
-        font-size: 1.5rem;
+
+      .link-card .icon {
+        font-size: 1.3rem;
       }
+
       .link-card__title {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
       }
+
       .link-card__sub {
         display: none;
       }
+
       .badge {
-        font-size: 0.45rem;
-        padding: 0.05rem 0.5rem;
-        margin-top: 0;
+        font-size: 0.4rem;
+        padding: 0.05rem 0.4rem;
       }
-      .section-title {
-        font-size: 0.55rem;
-        margin: 1rem 0 0.5rem 0;
-      }
-      .footer {
-        margin-top: 1.8rem;
-        padding-top: 1.4rem;
-        gap: 0.8rem;
-      }
-      .footer span {
-        font-size: 0.65rem;
-      }
-      .search-input {
-        font-size: 0.8rem;
-        padding: 0.6rem 0.8rem 0.6rem 2.5rem;
-      }
-      .tabs-container {
-        gap: 0.4rem;
-      }
+
       .tab-btn {
         font-size: 0.6rem;
         padding: 0.3rem 0.7rem;
-        gap: 0.2rem;
       }
-      .tab-btn .badge-count {
-        display: none;
+
+      .important-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .side-menu {
+        width: 320px;
+        max-width: 85vw;
+        padding: 1.5rem 1rem;
+      }
+
+      .section-title {
+        font-size: 0.55rem;
+        margin: 1rem 0 0.5rem;
       }
     }
 
-    @media (max-width: 380px) {
+    @media (max-width: 420px) {
+      body {
+        padding: 0.5rem;
+      }
+
+      .card {
+        padding: 0.8rem 0.6rem 1.2rem;
+        border-radius: 24px;
+      }
+
       .links-grid {
-        grid-template-columns: 1fr;
-        gap: 0.6rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
       }
+
       .link-card {
-        flex-direction: row;
-        justify-content: center;
-        gap: 0.6rem;
-        padding: 0.7rem 0.6rem;
-        flex-wrap: wrap;
+        padding: 0.6rem 0.1rem 0.5rem;
+        border-radius: 12px;
       }
-      .link-card i {
-        font-size: 1.3rem;
+
+      .link-card .icon {
+        font-size: 1.1rem;
       }
-      .link-card__sub {
-        display: none;
+
+      .link-card__title {
+        font-size: 0.65rem;
       }
+
       .badge {
         display: none;
       }
-      .link-card__title {
-        font-size: 0.85rem;
+
+      .tab-btn {
+        font-size: 0.5rem;
+        padding: 0.2rem 0.5rem;
+      }
+
+      .important-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-menu {
+        width: 280px;
+        padding: 1rem 0.8rem;
+      }
+
+      .search-input {
+        font-size: 0.75rem;
+        padding: 0.5rem 2.2rem 0.5rem 2.2rem;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .hamburger {
+        display: none;
+      }
+
+      .menu-overlay,
+      .side-menu {
+        display: none !important;
       }
     }
   </style>
 </head>
 <body>
+
   <!-- ===== встроенные SVG-иконки ===== -->
   <svg style="display:none" aria-hidden="true">
     <defs>
@@ -687,10 +862,6 @@
         <circle cx="12" cy="7" r="3.2"/>
         <path d="M6 21v-1.5a6 6 0 0 1 12 0V21"/>
         <path d="M10.3 12.2 12 15l1.7-2.8"/>
-      </symbol>
-      <symbol id="icon-handshake" viewBox="0 0 24 24">
-        <path d="M3 11.5 8 8l4 2.5 4-2.5 5 3.5"/>
-        <path d="M8.5 11.5 11 15l-2 2M15.5 11.5 13 15l2 2"/>
       </symbol>
       <symbol id="icon-bolt" viewBox="0 0 24 24">
         <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" stroke-linejoin="round"/>
@@ -743,6 +914,65 @@
         <rect x="3" y="14" width="7" height="7" rx="1.5"/>
         <rect x="14" y="14" width="7" height="7" rx="1.5"/>
       </symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24">
+        <path d="M12 21s7-7.5 7-12a7 7 0 1 0-14 0c0 4.5 7 12 7 12Z"/>
+        <circle cx="12" cy="9" r="2.3"/>
+      </symbol>
+      <symbol id="icon-phone" viewBox="0 0 24 24">
+        <path d="M7.5 3.5c.6 1.6 1 3 1.7 4.3a1 1 0 0 1-.2 1.1L7.6 10.3a12.5 12.5 0 0 0 6.1 6.1l1.4-1.4a1 1 0 0 1 1.1-.2c1.3.7 2.7 1.1 4.3 1.7.6.2 1 .8.9 1.4l-.5 2.2a1.6 1.6 0 0 1-1.7 1.2A18 18 0 0 1 3.5 5.7a1.6 1.6 0 0 1 1.2-1.7l2.2-.5c.6-.1 1.2.3 1.4.9Z" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3.5 2"/>
+      </symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M3 12h18M12 3c2.5 2.5 3.5 6 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-6-3.5-9s1-6.5 3.5-9Z"/>
+      </symbol>
+      <symbol id="icon-gear" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3.2"/>
+        <path d="M12 3v2.4M12 18.6V21M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M3 12h2.4M18.6 12H21M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+      </symbol>
+      <symbol id="icon-wheat" viewBox="0 0 24 24">
+        <path d="M12 21V9"/>
+        <path d="M12 9c-2-2-2-4-1-6 2 1 3 3 1 6ZM12 9c2-2 2-4 1-6-2 1-3 3-1 6ZM12 13.5c-2-1.5-3-3-2-5 2 .5 3.5 2 2 5ZM12 13.5c2-1.5 3-3 2-5-2 .5-3.5 2-2 5Z" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-computer" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="12" rx="1.5"/>
+        <path d="M8 20h8M12 16v4"/>
+      </symbol>
+      <symbol id="icon-car" viewBox="0 0 24 24">
+        <path d="M4 16v-3.5L6 8h12l2 4.5V16"/>
+        <path d="M4 16h16"/>
+        <circle class="dot" cx="7.5" cy="16.3" r="1.4"/>
+        <circle class="dot" cx="16.5" cy="16.3" r="1.4"/>
+      </symbol>
+      <symbol id="icon-building" viewBox="0 0 24 24">
+        <rect x="5" y="3" width="14" height="18" rx="1"/>
+        <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>
+      </symbol>
+      <symbol id="icon-money" viewBox="0 0 24 24">
+        <rect x="2.5" y="6" width="19" height="12" rx="2"/>
+        <circle cx="12" cy="12" r="2.5"/>
+      </symbol>
+      <symbol id="icon-ship" viewBox="0 0 24 24">
+        <path d="M4 14h16l-2 5H6l-2-5Z"/>
+        <path d="M8 14V6h5l3 4"/>
+        <path d="M12 3v3"/>
+      </symbol>
+      <symbol id="icon-palette" viewBox="0 0 24 24">
+        <path d="M12 3a9 9 0 1 0 0 18c1 0 1.8-.8 1.8-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7Z"/>
+        <circle class="dot" cx="7.5" cy="10.5" r="1"/>
+        <circle class="dot" cx="9.5" cy="7" r="1"/>
+        <circle class="dot" cx="14.5" cy="7" r="1"/>
+      </symbol>
+      <symbol id="icon-scale" viewBox="0 0 24 24">
+        <path d="M12 3v18M7 3h10"/>
+        <path d="M4 8l3-4 3 4M4 8a3 3 0 0 0 6 0M14 8l3-4 3 4M14 8a3 3 0 0 0 6 0"/>
+      </symbol>
+      <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+        <path d="M6 9l6 6 6-6"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -753,89 +983,271 @@
     <div class="shape shape--3"></div>
   </div>
 
-  <!-- карточка -->
+  <!-- ===== МЕНЮ ОВЕРЛЕЙ ===== -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- ===== САЙД-МЕНЮ ===== -->
+  <nav class="side-menu" id="sideMenu" role="navigation" aria-label="Основное меню">
+    <div class="menu-header">
+      <span class="brand-text">
+        <svg class="ico" aria-hidden="true"><use href="#icon-cap"></use></svg>
+        Навигатор ДГТУ
+      </span>
+      <button class="menu-close" id="menuClose" aria-label="Закрыть меню">
+        <svg class="ico" aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
+    </div>
+
+    <!-- Соцсети -->
+    <div class="menu-section">
+      <div class="menu-section-title">
+        <svg class="ico" aria-hidden="true"><use href="#icon-share"></use></svg> Социальные сети
+      </div>
+      <a href="https://t.me/dstu_live" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-paper-plane"></use></svg></span> Telegram <span class="badge-menu">ДГТУ</span>
+      </a>
+      <a href="https://vk.com/donstu" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-vk"></use></svg></span> ВКонтакте <span class="badge-menu">ДГТУ</span>
+      </a>
+      <a href="https://ok.ru/donstu" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-ok"></use></svg></span> Одноклассники
+      </a>
+      <a href="https://dzen.ru/donstu" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-newspaper"></use></svg></span> Дзен
+      </a>
+      <a href="https://rutube.ru/channel/24675086" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-video"></use></svg></span> Rutube
+      </a>
+      <a href="https://max.ru/dstu_live" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-bolt"></use></svg></span> MAX канал
+      </a>
+    </div>
+
+    <!-- Важная информация -->
+    <div class="menu-section">
+      <div class="menu-section-title">
+        <svg class="ico" aria-hidden="true"><use href="#icon-pin"></use></svg> Важная информация
+      </div>
+      <div class="menu-item"><span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-building"></use></svg></span> пл. Гагарина, 1, Ростов-на-Дону</div>
+      <div class="menu-item"><span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-phone"></use></svg></span> 8 (863) 306–20–00 <span class="badge-menu">приёмная</span></div>
+      <div class="menu-item"><span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-clock"></use></svg></span> Пн–Пт 8:30–17:00</div>
+      <div class="menu-item"><span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-user-tie"></use></svg></span> Ректор: Бесарион Месхи</div>
+      <div class="menu-item"><span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-cap"></use></svg></span> 51 000+ студентов</div>
+    </div>
+
+    <!-- Институты и факультеты -->
+    <div class="menu-section">
+      <div class="menu-section-title">
+        <svg class="ico" aria-hidden="true"><use href="#icon-building"></use></svg> Институты и факультеты
+      </div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-1" data-faculty="fac-1">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-paper-plane"></use></svg></span> Авиастроение
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-1"><div>
+        <div class="menu-item">— Самолётостроение</div>
+        <div class="menu-item">— Двигатели и энергоустановки</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-2" data-faculty="fac-2">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-gear"></use></svg></span> Автоматизация и мехатроника
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-2"><div>
+        <div class="menu-item">— Автоматизация технологических процессов</div>
+        <div class="menu-item">— Мехатроника и робототехника</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-3" data-faculty="fac-3">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-wheat"></use></svg></span> Агропромышленный
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-3"><div>
+        <div class="menu-item">— Агроинженерия</div>
+        <div class="menu-item">— Технология производства и переработки</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-4" data-faculty="fac-4">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-computer"></use></svg></span> Информатика и ВТ
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-4"><div>
+        <div class="menu-item">— Программная инженерия</div>
+        <div class="menu-item">— Информационные системы</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-5" data-faculty="fac-5">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-car"></use></svg></span> Дорожно-транспортный
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-5"><div>
+        <div class="menu-item">— Автомобили и автомобильное хозяйство</div>
+        <div class="menu-item">— Организация перевозок</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-6" data-faculty="fac-6">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-building"></use></svg></span> Инженерно-строительный
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-6"><div>
+        <div class="menu-item">— Промышленное и гражданское строительство</div>
+        <div class="menu-item">— Строительство уникальных зданий</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-7" data-faculty="fac-7">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-money"></use></svg></span> Инновационный бизнес и менеджмент
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-7"><div>
+        <div class="menu-item">— Менеджмент</div>
+        <div class="menu-item">— Бизнес-информатика</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-8" data-faculty="fac-8">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-ship"></use></svg></span> Кораблестроение
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-8"><div>
+        <div class="menu-item">— Кораблестроение</div>
+        <div class="menu-item">— Океанотехника</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-9" data-faculty="fac-9">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-palette"></use></svg></span> Архитектура, дизайн и искусств
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-9"><div>
+        <div class="menu-item">— Архитектура</div>
+        <div class="menu-item">— Дизайн</div>
+      </div></div>
+
+      <button class="menu-item faculty-toggle" aria-expanded="false" aria-controls="fac-10" data-faculty="fac-10">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-scale"></use></svg></span> Юридический
+        <span class="arrow"><svg class="ico" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></span>
+      </button>
+      <div class="faculty-sub" id="fac-10"><div>
+        <div class="menu-item">— Юриспруденция</div>
+        <div class="menu-item">— Правоохранительная деятельность</div>
+      </div></div>
+    </div>
+
+    <!-- Дополнительно -->
+    <div class="menu-section">
+      <div class="menu-section-title">
+        <svg class="ico" aria-hidden="true"><use href="#icon-arrow-right"></use></svg> Быстрые ссылки
+      </div>
+      <a href="https://donstu.ru" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-globe"></use></svg></span> Официальный сайт
+      </a>
+      <a href="https://t.me/dni_navigacii" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-compass"></use></svg></span> Дни навигации
+      </a>
+      <a href="https://max.ru/BesarionMeskhi" class="menu-item" target="_blank" rel="noopener">
+        <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-user-tie"></use></svg></span> Ректор в MAX
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===== ОСНОВНАЯ КАРТОЧКА ===== -->
   <main class="card">
+
+    <!-- Верхняя панель с гамбургером -->
+    <div class="top-bar">
+      <a href="#" class="brand">
+        <span class="brand-icon"><svg class="ico" aria-hidden="true"><use href="#icon-cap"></use></svg></span>
+        <span class="brand-text">
+          ДГТУ
+          <span class="brand-sub">Навигатор</span>
+        </span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Открыть меню" aria-expanded="false" aria-controls="sideMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Заголовок -->
     <div class="header">
-      <div class="header__icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#icon-cap"></use></svg></div>
-      <h1>ДГТУ · Навигатор</h1>
+      <h1>Навигатор ДГТУ</h1>
       <p>официальные и студенческие каналы</p>
     </div>
 
-    <!-- ===== ПОИСК ===== -->
+    <!-- Поиск -->
     <div class="search-container" role="search">
-      <span class="search-icon" aria-hidden="true">
-        <svg class="icon" style="width:1.2rem;height:1.2rem;"><use href="#icon-search"></use></svg>
-      </span>
-      <input 
-        type="text" 
-        class="search-input" 
-        id="searchInput" 
-        placeholder="Поиск каналов по названию..." 
-        aria-label="Поиск каналов"
-        autocomplete="off"
-      />
+      <span class="search-icon" aria-hidden="true"><svg class="ico" aria-hidden="true"><use href="#icon-search"></use></svg></span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Поиск каналов..." aria-label="Поиск каналов" autocomplete="off" />
       <button class="search-clear" id="searchClear" aria-label="Очистить поиск">
-        <svg class="icon" style="width:1.2rem;height:1.2rem;"><use href="#icon-close"></use></svg>
+        <svg class="ico" aria-hidden="true"><use href="#icon-close"></use></svg>
       </button>
     </div>
     <div class="search-results-counter" id="resultsCounter" role="status" aria-live="polite"></div>
 
-    <!-- ===== БЫСТРЫЕ ФИЛЬТРЫ (ТАБЫ) ===== -->
+    <!-- Табы -->
     <div class="tabs-container" role="tablist">
       <button class="tab-btn active" data-filter="all" role="tab" aria-selected="true" aria-controls="sec-tg sec-vk sec-other">
-        <svg class="icon"><use href="#icon-all"></use></svg> Все
-        <span class="badge-count" data-count-for="all">10</span>
+        <svg class="ico" aria-hidden="true"><use href="#icon-all"></use></svg> Все
       </button>
       <button class="tab-btn" data-filter="primary" role="tab" aria-selected="false" aria-controls="sec-tg">
-        <svg class="icon"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
-        <span class="badge-count" data-count-for="primary">5</span>
+        <svg class="ico" aria-hidden="true"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
       </button>
       <button class="tab-btn" data-filter="vk" role="tab" aria-selected="false" aria-controls="sec-vk">
-        <svg class="icon"><use href="#icon-vk"></use></svg> ВКонтакте
-        <span class="badge-count" data-count-for="vk">2</span>
+        <svg class="ico" aria-hidden="true"><use href="#icon-vk"></use></svg> ВКонтакте
       </button>
       <button class="tab-btn" data-filter="other" role="tab" aria-selected="false" aria-controls="sec-other">
-        <svg class="icon"><use href="#icon-share"></use></svg> Другие
-        <span class="badge-count" data-count-for="other">3</span>
+        <svg class="ico" aria-hidden="true"><use href="#icon-globe"></use></svg> Другие
       </button>
     </div>
 
+    <!-- ===== ВАЖНАЯ ИНФОРМАЦИЯ ===== -->
+    <div class="important-block">
+      <div class="important-grid">
+        <div class="important-item">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-building"></use></svg></span>
+          <div><span class="value">пл. Гагарина, 1</span><span class="label">Главный корпус</span></div>
+        </div>
+        <div class="important-item">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-phone"></use></svg></span>
+          <div><span class="value">8 (863) 306–20–00</span><span class="label">Приёмная комиссия</span></div>
+        </div>
+        <div class="important-item">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-clock"></use></svg></span>
+          <div><span class="value">8:30 – 17:00</span><span class="label">Пн–Пт</span></div>
+        </div>
+        <div class="important-item">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-cap"></use></svg></span>
+          <div><span class="value">51 000+</span><span class="label">Студентов</span></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== СЕКЦИЯ: Telegram & MAX ===== -->
-    <section class="section-primary" data-section="primary" aria-labelledby="sec-tg">
+    <section data-section="primary" aria-labelledby="sec-tg">
       <h2 class="section-title" id="sec-tg">
-        <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
+        <svg class="ico" aria-hidden="true"><use href="#icon-paper-plane"></use></svg> Telegram & MAX
       </h2>
       <div class="links-grid">
-        <a href="https://t.me/dstu_live" class="link-card category-tg" style="--i:1" target="_blank" rel="noopener" data-search="ДГТУ в TG новости анонсы Telegram">
-          <svg class="icon" aria-hidden="true"><use href="#icon-paper-plane"></use></svg>
+        <a href="https://t.me/dstu_live" class="link-card category-tg" target="_blank" rel="noopener" data-search="ДГТУ в TG новости">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-paper-plane"></use></svg></span>
           <span class="link-card__title">ДГТУ в TG</span>
           <span class="link-card__sub">новости, анонсы</span>
           <span class="badge">подписаться</span>
         </a>
-
-        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" style="--i:2" target="_blank" rel="noopener" data-search="Ректор ДГТУ Бесарион Месхи MAX ректорат">
-          <svg class="icon" aria-hidden="true"><use href="#icon-user-tie"></use></svg>
+        <a href="https://max.ru/BesarionMeskhi" class="link-card category-max" target="_blank" rel="noopener" data-search="Ректор ДГТУ Бесарион Месхи">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-user-tie"></use></svg></span>
           <span class="link-card__title">Ректор ДГТУ</span>
           <span class="link-card__sub">Бесарион Месхи</span>
           <span class="badge">ректорат</span>
         </a>
-
-        <a href="https://vk.ru/profdstu" class="link-card category-other" style="--i:3" target="_blank" rel="noopener" data-search="Профсоюз ДГТУ студенческая защита профком">
-          <svg class="icon" aria-hidden="true"><use href="#icon-handshake"></use></svg>
-          <span class="link-card__title">Профсоюз ДГТУ</span>
-          <span class="link-card__sub">студенческая защита</span>
-          <span class="badge">профком</span>
-        </a>
-
-        <a href="https://max.ru/dstu_live" class="link-card category-max" style="--i:4" target="_blank" rel="noopener" data-search="MAX канал актуальное топ">
-          <svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg>
+        <a href="https://max.ru/dstu_live" class="link-card category-max" target="_blank" rel="noopener" data-search="MAX канал актуальное">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-bolt"></use></svg></span>
           <span class="link-card__title">MAX канал</span>
           <span class="link-card__sub">актуальное</span>
           <span class="badge">топ</span>
         </a>
-
-        <a href="https://t.me/dni_navigacii" class="link-card category-nav" style="--i:5" target="_blank" rel="noopener" data-search="Дни навигации ориентир ДГТУ навигатор">
-          <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+        <a href="https://t.me/dni_navigacii" class="link-card category-nav" target="_blank" rel="noopener" data-search="Дни навигации ориентир">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-compass"></use></svg></span>
           <span class="link-card__title">Дни навигации</span>
           <span class="link-card__sub">ориентир в ДГТУ</span>
           <span class="badge">навигатор</span>
@@ -846,18 +1258,17 @@
     <!-- ===== СЕКЦИЯ: ВКонтакте ===== -->
     <section data-section="vk" aria-labelledby="sec-vk">
       <h2 class="section-title" id="sec-vk">
-        <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg> ВКонтакте
+        <svg class="ico" aria-hidden="true"><use href="#icon-vk"></use></svg> ВКонтакте
       </h2>
       <div class="links-grid">
-        <a href="https://vk.com/donstu" class="link-card category-vk" style="--i:1" target="_blank" rel="noopener" data-search="ВК ДГТУ официальная страница ВКонтакте">
-          <svg class="icon" aria-hidden="true"><use href="#icon-vk"></use></svg>
+        <a href="https://vk.com/donstu" class="link-card category-vk" target="_blank" rel="noopener" data-search="ВК ДГТУ официальная страница">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-vk"></use></svg></span>
           <span class="link-card__title">ВК · ДГТУ</span>
           <span class="link-card__sub">официальная страница</span>
           <span class="badge">vk.com</span>
         </a>
-
-        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" style="--i:2" target="_blank" rel="noopener" data-search="Дни навигации ВК ВКонтакте навигатор dn.donstu">
-          <svg class="icon" aria-hidden="true"><use href="#icon-map-signs"></use></svg>
+        <a href="https://vk.ru/dn.donstu" class="link-card category-nav" target="_blank" rel="noopener" data-search="Дни навигации ВК">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-map-signs"></use></svg></span>
           <span class="link-card__title">Дни навигации ВК</span>
           <span class="link-card__sub">vk.ru/dn.donstu</span>
           <span class="badge">навигатор</span>
@@ -868,25 +1279,23 @@
     <!-- ===== СЕКЦИЯ: Другие соцсети ===== -->
     <section data-section="other" aria-labelledby="sec-other">
       <h2 class="section-title" id="sec-other">
-        <svg class="icon" aria-hidden="true"><use href="#icon-share"></use></svg> Другие платформы
+        <svg class="ico" aria-hidden="true"><use href="#icon-globe"></use></svg> Другие платформы
       </h2>
       <div class="links-grid">
-        <a href="https://ok.ru/donstu" class="link-card category-social" style="--i:1" target="_blank" rel="noopener" data-search="Одноклассники официальная группа ok.ru">
-          <svg class="icon" aria-hidden="true"><use href="#icon-ok"></use></svg>
+        <a href="https://ok.ru/donstu" class="link-card category-social" target="_blank" rel="noopener" data-search="Одноклассники официальная группа">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-ok"></use></svg></span>
           <span class="link-card__title">Одноклассники</span>
           <span class="link-card__sub">официальная группа</span>
           <span class="badge">ok.ru</span>
         </a>
-
-        <a href="https://dzen.ru/donstu" class="link-card category-social" style="--i:2" target="_blank" rel="noopener" data-search="Дзен публикации ДГТУ dzen.ru">
-          <svg class="icon" aria-hidden="true"><use href="#icon-newspaper"></use></svg>
+        <a href="https://dzen.ru/donstu" class="link-card category-social" target="_blank" rel="noopener" data-search="Дзен публикации ДГТУ">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-newspaper"></use></svg></span>
           <span class="link-card__title">Дзен</span>
           <span class="link-card__sub">публикации ДГТУ</span>
           <span class="badge">dzen.ru</span>
         </a>
-
-        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" style="--i:3" target="_blank" rel="noopener" data-search="Rutube видеоканал ДГТУ rutube">
-          <svg class="icon" aria-hidden="true"><use href="#icon-video"></use></svg>
+        <a href="https://rutube.ru/channel/24675086" class="link-card category-social" target="_blank" rel="noopener" data-search="Rutube видеоканал ДГТУ">
+          <span class="icon"><svg class="ico" aria-hidden="true"><use href="#icon-video"></use></svg></span>
           <span class="link-card__title">Rutube</span>
           <span class="link-card__sub">видеоканал ДГТУ</span>
           <span class="badge">rutube</span>
@@ -894,10 +1303,11 @@
       </div>
     </section>
 
-    <!-- футер -->
+    <!-- Футер -->
     <div class="footer">
-      <span><svg class="icon" aria-hidden="true"><use href="#icon-hashtag"></use></svg> ДГТУ · все каналы</span>
-      <span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg> обновлено 2026</span>
+      <span><svg class="ico" aria-hidden="true"><use href="#icon-building"></use></svg> пл. Гагарина, 1</span>
+      <span><svg class="ico" aria-hidden="true"><use href="#icon-phone"></use></svg> 8 (863) 306–20–00</span>
+      <span><svg class="ico" aria-hidden="true"><use href="#icon-arrow-right"></use></svg> обновлено 2026</span>
     </div>
   </main>
 
@@ -905,6 +1315,88 @@
     (function() {
       'use strict';
 
+      // ===== ГАМБУРГЕР + FOCUS TRAP =====
+      const hamburger = document.getElementById('hamburger');
+      const sideMenu = document.getElementById('sideMenu');
+      const menuOverlay = document.getElementById('menuOverlay');
+      const menuClose = document.getElementById('menuClose');
+
+      function getFocusable(container) {
+        return Array.from(container.querySelectorAll(
+          'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
+        )).filter(el => el.offsetParent !== null);
+      }
+
+      function trapFocus(e) {
+        if (e.key !== 'Tab') return;
+        const focusable = getFocusable(sideMenu);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+
+      function openMenu() {
+        sideMenu.classList.add('open');
+        menuOverlay.classList.add('open');
+        hamburger.classList.add('active');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', trapFocus);
+        // фокус переходит на кнопку закрытия меню
+        menuClose.focus();
+      }
+
+      function closeMenu() {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', trapFocus);
+        // фокус возвращается на гамбургер
+        hamburger.focus();
+      }
+
+      function toggleMenu() {
+        if (sideMenu.classList.contains('open')) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      }
+
+      hamburger.addEventListener('click', toggleMenu);
+      menuOverlay.addEventListener('click', closeMenu);
+      menuClose.addEventListener('click', closeMenu);
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sideMenu.classList.contains('open')) {
+          closeMenu();
+        }
+      });
+
+      // ===== АККОРДЕОН ФАКУЛЬТЕТОВ =====
+      const facultyToggles = document.querySelectorAll('.faculty-toggle');
+      facultyToggles.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const targetId = this.dataset.faculty;
+          const target = document.getElementById(targetId);
+          const isOpen = this.getAttribute('aria-expanded') === 'true';
+
+          this.setAttribute('aria-expanded', String(!isOpen));
+          target.classList.toggle('open', !isOpen);
+        });
+      });
+
+      // ===== ПОИСК =====
       const searchInput = document.getElementById('searchInput');
       const searchClear = document.getElementById('searchClear');
       const resultsCounter = document.getElementById('resultsCounter');
@@ -915,42 +1407,13 @@
       let currentFilter = 'all';
       let currentSearchQuery = '';
 
-      // ===== ДИНАМИЧЕСКИЙ ПОДСЧЁТ КАРТОЧЕК В ТАБАХ =====
-      // Считаем реальное количество карточек по секциям, чтобы цифры
-      // в табах никогда не расходились с фактическим числом ссылок.
-      function updateTabCounts() {
-        const countsBySection = {};
-        let total = 0;
-
-        allSections.forEach(section => {
-          const sectionName = section.dataset.section;
-          const count = section.querySelectorAll('.link-card').length;
-          countsBySection[sectionName] = count;
-          total += count;
-        });
-
-        document.querySelectorAll('.badge-count').forEach(badge => {
-          const key = badge.dataset.countFor;
-          if (key === 'all') {
-            badge.textContent = total;
-          } else if (countsBySection.hasOwnProperty(key)) {
-            badge.textContent = countsBySection[key];
-          }
-        });
-      }
-
-      // ===== ФИЛЬТРАЦИЯ ПО ТАБАМ =====
       function filterByTab(filter) {
         currentFilter = filter;
-
-        // Обновляем активный таб
         tabButtons.forEach(btn => {
           const isActive = btn.dataset.filter === filter;
           btn.classList.toggle('active', isActive);
           btn.setAttribute('aria-selected', isActive);
         });
-
-        // Показываем/скрываем секции
         allSections.forEach(section => {
           const sectionName = section.dataset.section;
           if (filter === 'all' || sectionName === filter) {
@@ -959,70 +1422,47 @@
             section.classList.add('hidden-section');
           }
         });
-
-        // Применяем поиск поверх фильтра
         applySearch(currentSearchQuery);
       }
 
-      // ===== ПОИСК =====
       function applySearch(query) {
         const trimmed = query.trim().toLowerCase();
         currentSearchQuery = query;
-
         let visibleCount = 0;
 
         allCards.forEach(card => {
-          // Проверяем, видима ли секция карточки
           const section = card.closest('section[data-section]');
           const isSectionVisible = !section || !section.classList.contains('hidden-section');
-
           const searchData = (card.getAttribute('data-search') || '').toLowerCase();
           const title = (card.querySelector('.link-card__title')?.textContent || '').toLowerCase();
           const sub = (card.querySelector('.link-card__sub')?.textContent || '').toLowerCase();
 
-          const matchSearch = trimmed === '' || 
-                              searchData.includes(trimmed) || 
-                              title.includes(trimmed) || 
-                              sub.includes(trimmed);
-
+          const matchSearch = trimmed === '' || searchData.includes(trimmed) || title.includes(trimmed) || sub.includes(trimmed);
           const isVisible = isSectionVisible && matchSearch;
 
-          if (isVisible) {
-            card.classList.remove('hidden');
-            visibleCount++;
-          } else {
-            card.classList.add('hidden');
-          }
+          card.classList.toggle('hidden', !isVisible);
+          if (isVisible) visibleCount++;
         });
 
-        // Обновляем счетчик
         if (trimmed === '') {
           resultsCounter.textContent = '';
           resultsCounter.classList.remove('highlight');
           searchClear.classList.remove('visible');
         } else {
-          const total = allCards.length;
-          resultsCounter.textContent = `Найдено: ${visibleCount} из ${total}`;
+          resultsCounter.textContent = `Найдено: ${visibleCount} из ${allCards.length}`;
           resultsCounter.classList.add('highlight');
           searchClear.classList.add('visible');
         }
       }
 
-      // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+      searchInput.addEventListener('input', function() { applySearch(this.value); });
 
-      // Поиск
-      searchInput.addEventListener('input', function() {
-        applySearch(this.value);
-      });
-
-      // Очистка поиска
       searchClear.addEventListener('click', function() {
         searchInput.value = '';
         applySearch('');
         searchInput.focus();
       });
 
-      // Escape — очистка поиска
       searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           searchInput.value = '';
@@ -1031,16 +1471,11 @@
         }
       });
 
-      // Табы
       tabButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-          const filter = this.dataset.filter;
-          filterByTab(filter);
-        });
+        btn.addEventListener('click', function() { filterByTab(this.dataset.filter); });
       });
 
-      // ===== ИНИЦИАЛИЗАЦИЯ =====
-      updateTabCounts();
+      // Инициализация
       filterByTab('all');
     })();
   </script>
